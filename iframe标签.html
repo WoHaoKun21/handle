@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .iframeStyle {
+        width: 500px;
+        height: 500px;
+        border: 1px solid #f00;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      src="https://segmentfault.com/a/1190000041996165"
+      frameborder="0"
+      class="iframeStyle"
+      id="iframe"
+    ></iframe>
+    <button onclick="postTestMessage()">postMessage</button>
+  </body>
+  <script>
+    let receiveMessage = function (event) {
+      let datas = JSON.parse(event.data);
+      if (datas.type === "advert") {
+        let postIframeData = {
+          type: "adGivePrize",
+          givePrize: true,
+        };
+        console.log("a： ", event, window.frames[0]);
+        window.frames[0].postMessage(JSON.stringify(postIframeData), "*");
+      }
+    };
+
+    window.addEventListener("message", receiveMessage, false);
+
+    function postTestMessage() {
+      let defaultAdData = {
+        type: "advert",
+        gameData: {
+          adId: "123",
+        },
+      };
+      window.postMessage(JSON.stringify(defaultAdData), "*");
+    }
+  </script>
+</html>

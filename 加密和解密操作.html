@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="save">加密</button>
+    <button id="unSave">解密</button>
+  </body>
+  <script>
+    const token =
+      "eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjI4ZjA5M2Q4LTE0NjktNDQ3My04MTNkLTQ4OGIwNWQ5ZWI2YSJ9.FY2o08ZN-SwabyhevmYay0Nr59dfBrU_QgALaXsothtCkEhY8a73t3pkTgnUFiM4jxJT3EVfCswQezWkmDEjuw";
+    console.log("token：", token);
+
+    const save = document.getElementById("save");
+    const unSave = document.getElementById("unSave");
+    let str = "";
+    // 加密操作
+    save.onclick = function () {
+      str = btoa(encodeURIComponent(token));
+      console.log("加密后的的数据：", str);
+    };
+    // 解密操作
+    unSave.onclick = function () {
+      console.log("token：", decodeURIComponent(atob(str)) === token);
+    };
+  </script>
+</html>

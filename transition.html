@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      p.custom-bullet {
+        width: 50px;
+        height: 60px;
+        background: #f00;
+      }
+      span.progress {
+        display: inline-block;
+        width: 50px;
+        height: 0.1667vw;
+        background-color: #a4a4a4;
+        border-radius: 5px;
+        position: relative;
+      }
+      span.progress .activeProgess {
+        position: absolute;
+        display: inline-block;
+        width: 0%;
+        height: 100%;
+        background-color: #09f;
+      }
+
+      .activePro span.progress .activeProgess {
+        width: 100%;
+        transition: width ease-in 3s;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="custom-bullet">
+      <span class="progress">
+        <i class="activeProgess"></i>
+      </span>
+    </p>
+    <p class="custom-bullet">
+      <span class="progress">
+        <i class="activeProgess"></i>
+      </span>
+    </p>
+    <p class="custom-bullet">
+      <span class="progress">
+        <i class="activeProgess"></i>
+      </span>
+    </p>
+    <p class="custom-bullet">
+      <span class="progress">
+        <i class="activeProgess"></i>
+      </span>
+    </p>
+  </body>
+  <script>
+    const DOMList = document.getElementsByClassName("custom-bullet");
+    for (let i in DOMList) {
+      DOMList[i].onclick = handleClick;
+    }
+
+    function handleClick(dom) {
+      for (let i in DOMList) {
+        DOMList[i].className = "custom-bullet";
+      }
+      this.classList.add("activePro");
+    }
+  </script>
+</html>

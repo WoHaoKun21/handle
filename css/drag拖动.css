@@ -1,0 +1,51 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+/* 容器大盒子 */
+.container {
+  margin: 0 auto;
+  width: 1000px;
+  height: 500px;
+  border: 1px solid #f00;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 进度条 */
+#box {
+  width: 300px;
+  height: 20px;
+  background-color: #e4e4e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+/* 节点样式 */
+.selectNode {
+  width: 12px;
+  height: 30px;
+  background-color: #0f0;
+  border-radius: 45%;
+}
+
+/* 拖动节点样式 */
+#dragBefore,
+#dragAfter {
+  position: absolute;
+  left: -4px;
+  width: 20px;
+  transition: all;
+}
+#dragAfter {
+  bottom: 25px;
+  /* transform: rotate(-100deg); */
+}
+#dragBefore {
+  top: 25px;
+  left: 44px;
+  transform: rotate(180deg);
+}

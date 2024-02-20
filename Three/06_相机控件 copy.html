@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+    <script src="./jsm/controls/OrbitControls.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+    //                              虚拟场景
+    // 一、创建3D虚拟场景
+    const scene = new THREE.Scene();
+    // 二、创建集合体
+    const geometry = new THREE.BoxGeometry(30, 60, 30); // 创建圆锥体，参数表示物体的
+    // 三、创建几何体外观
+    const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+    // 四、创建网格模式
+    const mesh = new THREE.Mesh(geometry, material);
+    // 五、设置模型位置
+    mesh.position.set(0, 0, 0);
+    // 六、添加模型到场景中
+    scene.add(mesh);
+
+    //                              在场景中添加光源
+    // 一、创建平行光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); // 环境光源
+    // 二、光源位置
+    ambientLight.position.set(400, 0, 0); //点光源放在x轴上
+    // 二、将光源添加到场景中
+    scene.add(ambientLight);
+
+    //                              相机创建
+    // 一、设置画布大小
+    const width = 900,
+      height = 600;
+    // 二、构建相机
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000); // 创建相机，并设置相机的角度、canvas宽高比、近截面、远截面
+    // 三、设置相机位置
+    camera.position.set(200, 200, 200); // 设置相机的初始视角
+    // 四、设置相机观察模型位置
+    camera.lookAt(mesh.position);
+
+    //                              渲染器渲染（一般最后执行）
+    // 一、创建渲染器
+    const renderer = new THREE.WebGLRenderer(); // 创建渲染器对象
+    // 二、设置渲染器对象画布大小
+    renderer.setSize(width, height);
+    // 三、通过渲染器方法，将相机和场景进行渲染
+    renderer.render(scene, camera);
+    // 四、将渲染后的画布添加到指定的
+    document.getElementById("container").appendChild(renderer.domElement);
+
+    //                                          相机控件使用（可选，建议加上，放在执行后面）
+    // 一、对相机添加控件
+    const controls = new OrbitControls(camera, renderer.domElement); // 设置相机控件轨道控制器OrbitControls
+    // 二、设置监听事件，如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
+    controls.addEventListener("change", function () {
+      renderer.render(scene, camera); //执行渲染操作
+    }); //监听鼠标、键盘事件
+
+    /*
+                                        相机控件OrbitControls的使用
+        一、OrbitControls的作用：旋转、缩放、平移；
+            使用：
+                const controls = new OrbitControls(camera, renderer.domElement); // 设置相机控件轨道控制器OrbitControls
+                // 如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
+                controls.addEventListener('change', function () { 
+                    renderer.render(scene, camera); //执行渲染操作
+                });//监听鼠标、键盘事件
+
+        二、OrbitControls本质：OrbitControls本质上就是改变相机的参数，比如相机的位置属性，改变相机位置也可以改变相机拍照场景中模型的角度，实现模型的360度旋转预览效果，改变透视投影相机距离模型的距离，就可以改变相机能看到的视野范围。
+            controls.addEventListener('change', function () { // 用来监听相加变化
+                // 浏览器控制台查看相机位置变化
+                console.log('camera.position',camera.position);
+            });
+    */
+  </script>
+</html>

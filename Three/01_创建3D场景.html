@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+    // 一、创建3D虚拟场景
+    const scene = new THREE.Scene();
+    // 二、创建集合体
+    const geometry = new THREE.ConeGeometry(1, 4, 8);
+    // 三、创建几何体外观
+    const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+    // 四、创建网格模式
+    const mesh = new THREE.Mesh(geometry, material);
+    // 五、设置模型位置
+    mesh.position.set(0, 0, 0);
+    // 六、添加模型到场景中
+    scene.add(mesh);
+    console.log(mesh);
+
+    /* 
+      一、Threejs对象几何体（Geometry）的集合体API
+        使用：const geometry = new Three.BoxGeometry(100, 100, 100);
+          ·BoxGeometry：长方体
+          ·CyllinderGeometry：圆形，也称半圆形或半球形（也称为圆形），可以用于绘制圆
+          ·SphereGeometry：球体，也称半球体（也称为圆球），可以用于绘制球形，也可以
+          ·ConeGeometry：圆锥体
+          ·PlaneGeometry：矩形平面
+          ·CircleGeometry：圆平面
+
+      二、物体外观：材质（Material）——如果你想定义物体的外观效果，比如颜色，就需要通过材质Material相关的API实现
+        使用：const material = new Three.MeshBasicMaterial({ color: "0xff0000" });
+          ·MeshBasicMaterial：网格基础材料，不会受到光照影响
+          ·MeshLambertMaterial：网格漫反射材质，会受到光照影响
+          ·MeshPhongMaterial：网格高光材质
+          ·MeshStandardMaterial和MeshPhysicalMaterial：物理材质
+          ·PointsMaterial：点材质
+          ·LineBasicMaterial：线基础材质
+          ·SpriteMaterial：精灵材质
+
+      三、物体：网格模式（Mesh）————两个参数分别为几何体geometry、材质material
+        使用：const mesh = new THREE.Mesh(geometry, material);
+
+      四、模型位置：Position
+        使用：const mesh = new THREE.Mesh(geometry, material);
+              mesh.position.set(0,10,0);// 设置网格模型在三维空间中的位置坐标，默认是坐标原点
+
+      五、add()方法：使用scene对象的add方法将创建好的物体添加到场景里面
+        使用：scene.add(mesh)
+    */
+  </script>
+</html>

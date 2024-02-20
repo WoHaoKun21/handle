@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function consoSee() {
+        async function async1() {
+          console.log(1);
+          await async2();
+          console.log(2);
+        }
+        async function async2() {
+          console.log(3);
+        }
+        console.log(4);
+        setTimeout(function () {
+          console.log(5);
+        });
+        async1();
+        new Promise(function (resolve) {
+          console.log(6);
+          resolve(console.log(7));
+        }).then(function () {
+          console.log(8);
+        });
+        console.log(9);
+      }
+      consoSee();
+
+      function consoSee2() {
+        setTimeout(() => {
+          new Promise((resolve) => {
+            resolve();
+          }).then(() => {
+            console.log("test");
+          });
+          console.log(4);
+        });
+        new Promise((resolve) => {
+          resolve();
+          console.log(1);
+        }).then(() => {
+          console.log(3);
+          Promise.resolve()
+            .then(() => {
+              console.log("before timeout");
+            })
+            .then(() => {
+              promise.resolve().then(() => {
+                console.log("also before timeout");
+              });
+            });
+        });
+        console.log(2);
+      }
+      // consoSee2();
+    </script>
+  </head>
+
+  <body></body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+
+    //                              虚拟场景
+    // 一、创建3D虚拟场景
+    const scene = new THREE.Scene();
+    // 二、创建集合体
+    const geometry = new THREE.ConeGeometry(1, 4, 8);
+    // 三、创建几何体外观
+    const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+    // 四、创建网格模式
+    const mesh = new THREE.Mesh(geometry, material);
+    // 五、设置模型位置
+    mesh.position.set(0, 0, 0);
+    // 六、添加模型到场景中
+    scene.add(mesh);
+
+    //                              相机创建
+    // 一、设置画布大小
+    const width = 900,
+      height = 600;
+    // 二、构建相机
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000); // 创建相机，并设置相机的角度、canvas宽高比、近截面、远截面
+    // 三、设置相机位置
+    camera.position.set(200, 200, 200); // 设置相机的初始视角
+    // 四、设置相机观察模型位置
+    camera.lookAt(mesh.position);
+
+    //                              渲染器渲染
+    // 一、创建渲染器
+    const renderer = new THREE.WebGLRenderer(); // 创建渲染器对象
+    // 二、设置渲染器对象画布大小
+    renderer.setSize(width, height);
+    // 三、通过渲染器方法，将相机和场景进行渲染
+    renderer.render(scene, camera);
+    // 四、将渲染后的画布添加到指定的
+    document.getElementById("container").appendChild(renderer.domElement);
+
+    //                              三维空间认识
+
+    /*
+                                        三维空间认识
+        一、辅助观察坐标系：THREE.AxesHelper(num)，参数表示坐标系坐标轴线段尺寸大小
+            使用：const axesHelper = new THREE.AxesHelper(150); // AxesHelper：辅助观察的坐标系
+                  scene.add(axesHelper); // 将坐标系添加到场景中
+        
+        二、材质半透明设置：设置材质半透明,这样可以看到坐标系的坐标原点。
+            使用：const material = new THREE.MeshBasicMaterial({
+                                      color: 0x0000ff, //设置材质颜色
+                                      transparent:true,//开启透明
+                                      opacity:0.5,//设置透明度
+                                   });
+
+        三、设置模型在坐标系中的位置或者尺寸：通过模型的位置、尺寸设置，加深3D坐标系的概念
+            使用：new THREE.BoxGeometry(100, 60, 20); // 设置几何体长宽高，也就是x、y、z三个方向的尺寸
+
+        四、改变相机参数：动态改变相机参数，可以是相机的视觉效果或者相机设置。 （可选）
+          使用：camera.position.set(-1000, 0, 0);
+                camera.lookAt(0, 0, 0);
+
+    */
+  </script>
+</html>

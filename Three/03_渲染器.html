@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+
+    //                              虚拟场景
+    // 一、创建3D虚拟场景
+    const scene = new THREE.Scene();
+    // 二、创建集合体
+    const geometry = new THREE.ConeGeometry(1, 4, 8);
+    // 三、创建几何体外观
+    const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+    // 四、创建网格模式
+    const mesh = new THREE.Mesh(geometry, material);
+    // 五、设置模型位置
+    mesh.position.set(0, 0, 0);
+    // 六、添加模型到场景中
+    scene.add(mesh);
+
+    //                              相机创建
+    // 七、设置画布大小
+    const width = 900,
+      height = 600;
+    // 八、构建相机
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000); // 创建相机，并设置相机的角度、canvas宽高比、近截面、远截面
+    // 九、设置相机位置
+    camera.position.set(200, 200, 200); // 设置相机的初始视角
+    // 十、设置相机观察模型位置
+    camera.lookAt(mesh.position);
+
+    //                              渲染器渲染
+    // 十一、创建渲染器
+    const renderer = new THREE.WebGLRenderer(); // 创建渲染器对象
+    // 十二、设置渲染器对象画布大小
+    renderer.setSize(width, height);
+    // 十三、通过渲染器方法，将相机和场景进行渲染
+    renderer.render(scene, camera);
+    // 十四、将渲染后的画布添加到指定的
+    document.getElementById("container").appendChild(renderer.domElement);
+
+    /*
+                                        渲染器（WebGLRenderer）
+        一、WebGL渲染器（WebGLRender）
+            使用：const renderer = new THREE.WebGLRenderer() // 创建渲染器对像
+        
+        二、设置渲染器对象canvas画布尺寸：.setSize(宽, 高)
+            使用：renderer.setSize(800, 500); // 设置three.js渲染区域的尺寸
+
+        三、渲染器渲染方法：.render()，渲染器WebGLRenderer执行渲染方法.render就可以生成一个canvas画布，并把三维场景Scene呈现画布上面。
+            使用：renderer.render(scene, camera); // 执行渲染操作. 创建WebGL渲染器对像。
+        
+        四、渲染器Canvas画布属性.domElement：通过.domElement可以获得渲染方法，.render()生成的就是canvas画布对象。
+            使用：document.body.appendChild(renderer,domElement); // 将canvas画布追加在body标签后面
+                  document.getElementById("container").appendChild(renderer.domElement)
+    */
+  </script>
+</html>

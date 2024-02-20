@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .imgBG {
+        height: 400px;
+        width: 400px;
+        background-position: 0px 0px, 10px 10px;
+        background-size: 4px 4px;
+        background-image: linear-gradient(
+            45deg,
+            #ff0000 25%,
+            transparent 25%,
+            transparent 75%,
+            #ff0000 75%,
+            #ff0000 100%
+          ),
+          linear-gradient(
+            45deg,
+            #ff0000 25%,
+            white 25%,
+            white 75%,
+            #ff0000 75%,
+            #ff0000 100%
+          );
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      请输入时间：
+      <input type="text" placeholder="请输入时间" id="inputValue" />
+      <button id="action">开始</button>
+    </p>
+    <p>
+      距离<span id="time">2023-05-29 14:30</span>剩余
+      <span id="date">00</span>天 <span id="hour">00</span>时:<span id="minute"
+        >00</span
+      >分:<span id="second">00</span>秒
+    </p>
+    <div class="imgBG">123</div>
+  </body>
+  <script>
+    const inputValue = document.getElementById("inputValue");
+    const action = document.getElementById("action");
+    const time = document.getElementById("time");
+    const date = document.getElementById("date");
+    const hour = document.getElementById("hour");
+    const minute = document.getElementById("minute");
+    const second = document.getElementById("second");
+    let count; // 存储定时器
+    // 2023-05-30 14:30:25
+    action.onclick = function () {
+      const times = inputValue.value; // 输入框的时间
+      time.innerText = times;
+      count = setInterval(function () {
+        const timeNum =
+          Date.parse(times || new Date()) - Date.parse(new Date());
+        countdown(timeNum);
+      }, 1000);
+    };
+
+    // 倒计时方法
+    const countdown = (timestamp) => {
+      // 得到的时间戳
+      const day = Math.floor(timestamp / (1000 * 60 * 60 * 24));
+      const h = Math.floor(
+        (timestamp % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const m = Math.floor((timestamp % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((timestamp % (1000 * 60)) / 1000);
+      date.innerText = day < 10 ? "0" + day : day;
+      hour.innerText = h < 10 ? "0" + h : h;
+      minute.innerText = m < 10 ? "0" + m : m;
+      second.innerText = s < 10 ? "0" + s : s;
+      if ((day === 0 && h === 0, m === 0 && s === 0)) {
+        clearInterval(count);
+      }
+    };
+  </script>
+</html>

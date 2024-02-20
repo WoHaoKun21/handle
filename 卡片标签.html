@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        border: 1px solid #f00;
+        display: flex;
+        position: relative;
+        width: 240px;
+        height: 100px;
+        margin: 100px auto;
+        overflow: hidden;
+      }
+      .container p.img {
+        width: 30%;
+        background-color: #f00;
+        font-size: 14px;
+      }
+      .container div {
+        width: 70%;
+        background-color: #f0f;
+        font-size: 14px;
+      }
+
+      /* 右上角标签 */
+      .container .tag {
+        position: absolute;
+        right: -35px;
+        top: -35px;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        transform: rotate(45deg);
+        color: #fff;
+        background-color: #5dd76d;
+      }
+      .tag_text {
+        position: absolute;
+        bottom: 5px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p class="img">123</p>
+      <div>信息</div>
+
+      <!-- 右上角标签 -->
+      <p class="tag">
+        <span class="tag_text">班长</span>
+      </p>
+    </div>
+  </body>
+</html>

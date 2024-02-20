@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      const dataArr = {
+        "2023-02-21": [
+          {
+            id: "fe0bcbb57f3c4046acb6bb0abf542590",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564172531097665537",
+            commProtocolName: "有功电能",
+            value: "81.0",
+            unit: "kwh",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "7e6a212803484fd69a99617bdf66c6d2",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+          {
+            id: "9898f5133d694604ad97b0093eb450db",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564171974026985474",
+            commProtocolName: "PH_PV",
+            value: "7.0",
+            unit: "",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "e834a2cc66634e4c9ec7996a0ae8ea78",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+          {
+            id: "008e34cb301c43f7aca74e6fae04165d",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564172366618034177",
+            commProtocolName: "总余氯_PV",
+            value: "3.361",
+            unit: "mg/l",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "58699cda8c814157b2b6b1724bda238f",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+          {
+            id: "f6ad9946cc5e4bdb90ac50effac7fd0b",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564170556486451201",
+            commProtocolName: "调节池进水流量_TQ",
+            value: "71.0",
+            unit: "㎥",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "d314919ffaf440a2b6",
+          },
+        ],
+        "2023-02-20": [
+          {
+            id: "fe0bcbb57f3c4046acb6bb0abf542590",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564172531097665537",
+            commProtocolName: "有功电能",
+            value: "86.0",
+            unit: "kwh",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "7e6a212803484fd69a99617bdf66c6d2",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+        ],
+        "2023-02-19": [
+          {
+            id: "fe0bcbb57f3c4046acb6bb0abf542590",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564172531097665537",
+            commProtocolName: "有功电能",
+            value: "82.0",
+            unit: "kwh",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "7e6a212803484fd69a99617bdf66c6d2",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+        ],
+        "2023-02-18": [
+          {
+            id: "fe0bcbb57f3c4046acb6bb0abf542590",
+            serialNumber: "1124",
+            protocolId: "1564065829316722689",
+            commProtocolItem: "1564172531097665537",
+            commProtocolName: "有功电能",
+            value: "85.0",
+            unit: "kwh",
+            calculationTime: "2023-02-21 00:00:00",
+            cpiId: "7e6a212803484fd69a99617bdf66c6d2",
+            orgId: "4ca29cafecb744f2beafda42a081f8b4",
+            parentTenantId: "fced55389e054d928c793d35a29fa3fe",
+            childTenantId: "fced55389e054d928c793d35a29fa3fe",
+          },
+        ],
+      };
+
+      const handleData = (arr) => {
+        const result = [];
+        for (let i in arr) {
+          console.log(i);
+          const obj = {};
+          arr[i].map((item, index) => {
+            if (index === 0) {
+              obj["createTime"] = i;
+              obj["value"] = item.value;
+            } else {
+              obj[`value${index + 1}`] = item.value;
+            }
+            return obj;
+          }); // 得到value
+          result.push(obj);
+        }
+        return result;
+      };
+
+      console.log(handleData(dataArr));
+    </script>
+  </head>
+
+  <body></body>
+</html>

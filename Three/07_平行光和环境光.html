@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+    <script src="./jsm/controls/OrbitControls.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script src="./js/comm.js"></script>
+  <script>
+    const container = document.getElementById("container");
+    initScene(); // 初始化虚拟空间
+    // initLight(); // 为虚拟空间添加光源
+
+    //  点光源辅助器
+    //  const pointLight = new THREE.PointLight(0xffffff, 0.9); // 创建点光源
+    //  pointLight.position.set(-100, 50, 60); // 设置光源位置
+    //  scene.add(pointLight); // 将光源添加到物理空间中
+    //  // 光源辅助观察——为虚拟空间添加一个光源来源模型
+    //  const pointLightHelper = new THREE.PointLightHelper(pointLight, 10);
+    //  scene.add(pointLightHelper);
+
+    // 平行光辅助器
+    const directional = new THREE.DirectionalLight(0xffffff, 1); // 创建平行光
+    // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
+    directional.position.set(-100, 50, 60); // 设置平行光来源位置
+    // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0
+    scene.add(directional); // 为场景添加光源
+    const dirLightHelper = new THREE.DirectionalLightHelper( // 添加平行光源模型
+      directional,
+      5,
+      0xffffff
+    );
+    scene.add(dirLightHelper);
+
+    initCamera(); // 初始化相机，模拟人的视线
+    initRenderer(container); // 将生成的画布模型渲染到指定挂载点
+    initOrbitControls(); // 为相机添加空间，模拟人的视角变化
+    /*
+                                        光源辅助器
+        光源类型有四种：环境光（AmbientLight）、点光源（PointLight）、聚光灯光源（SpotLight）、平行光（DirectionalLight）
+            注：在这四种光源中，可以使用的光源辅助器分别有：点光源辅助观察PointLightHelper、平行光辅助观察DirectionalLightHelper
+
+    */
+  </script>
+</html>

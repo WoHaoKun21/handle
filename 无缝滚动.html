@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+
+    <title>可切换方向的无缝衔接图片滚动效果</title>
+    <style>
+      * {
+        /* 初始化 */
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        /* 100%窗口高度 */
+        height: 100vh;
+        /* 弹性布局 居中显示 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        width: 180px;
+        /* 相对定位 */
+        position: relative;
+        /* 溢出隐藏 */
+        overflow: hidden;
+        border: 1px solid #f0f;
+      }
+      ul {
+        width: 800px;
+        height: 24px;
+        border: 1px solid #f00;
+        overflow: hidden;
+        display: flex;
+        position: relative;
+      }
+      li {
+        list-style: none;
+        height: 100%;
+        padding-right: 20px;
+      }
+      .btns {
+        display: flex;
+        justify-content: center;
+        padding-top: 50px;
+      }
+      .btn {
+        border: 1px solid #ddd;
+        padding: 5px 15px;
+        margin: 0 15px;
+        border-radius: 3px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <ul>
+        <li>-</li>
+        <li>-</li>
+        <li>-</li>
+        <li>-</li>
+        <li>-</li>
+        <li>-</li>
+        <li>&gt;</li>
+        <li>&gt;</li>
+        <li>&gt;</li>
+        <li>&gt;</li>
+        <li>&gt;</li>
+        <li>&gt;</li>
+      </ul>
+      <div class="btns">
+        <div class="btn">← 向左走</div>
+        <div class="btn">向右走 →</div>
+      </div>
+    </div>
+
+    <script src="./js/无缝滚动.js"></script>
+  </body>
+</html>

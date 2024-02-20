@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+    <script src="./jsm/controls/OrbitControls.js"></script>
+    <script src="./jsm/loaders/GLTFLoader.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script src="./js/comm.js"></script>
+  <script type="module">
+    import * as THREE from "./build/three.js";
+    import {OrbitControls} from "./jsm/controls/OrbitControls.js";
+    const container = document.getElementById("container");
+    initScene(); // 初始化虚拟空间
+    initLight(true); // 为虚拟空间添加，true走 环境光源点+光源辅助器；false走 平行光+平行光辅助器；两者可一期存在
+    initCamera(); // 初始化相机，模拟人的视线
+    initRenderer(container); // 将生成的画布模型渲染到指定挂载点
+    initOrbitControls(); // 为相机添加空间，模拟人的视角变化
+
+    // 动画渲染器的源码
+    let i = 0;
+    function render() {
+      i += 1;
+      console.log(`执行次数${i}`);
+      window.requestAnimationFrame(render);
+    }
+    // render();
+  </script>
+</html>

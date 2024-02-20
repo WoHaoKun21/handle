@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function deepCopy(obj) {
+        // 如果拷贝的对象不是object对象或者是空对象，则直接返回拷贝对象
+        if (typeof obj !== "object" || obj === null) {
+          return obj;
+        }
+        let copy;
+        if (obj instanceof Array) {
+          copy = [];
+          for (let i = 0; i < obj.length; i++) {
+            copy[i] = deepCopy(obj[i]);
+          }
+        } else {
+          copy = {};
+          for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              copy[key] = deepCopy(obj[key]);
+            }
+          }
+        }
+        return copy;
+      }
+
+      const arr = [
+        {
+          name: "tom",
+          time: "2023-02-06 13:32",
+          flag: true,
+          def: undefined,
+          err: new Error,
+          content: [{ text: "测试文本" }],
+        },
+        {
+          name: "jarry",
+          time: "2023-06-23 12:52",
+          flag: true,
+          def: undefined,
+          err: new Error,
+          content: [{ text: "测试文本2" }],
+        },
+      ];
+      console.log("深拷贝后的数据：", deepCopy(arr));
+    </script>
+  </head>
+  <body></body>
+</html>

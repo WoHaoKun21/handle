@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/tab切换页面.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="content">
+        <div id="showContent">123</div>
+        <div id="operateBox">
+          <button id="btOpe">操作</button>
+        </div>
+        <div id="buttonBox">
+          <button class="bt active">按钮1</button>
+          <button class="bt">按钮2</button>
+          <button class="bt">按钮3</button>
+        </div>
+        <!-- tab按钮 -->
+        <div class="btnContent">
+          <span class="btn active" data-src="demo1.html">设置</span>
+          <span class="btn" data-src="demo2.html">鼠标</span>
+          <span class="btn" data-src="demo3.html">瞄准</span>
+          <span class="btn" data-src="demo4.html">键盘</span>
+        </div>
+      </div>
+    </div>
+    <iframe src="./test.html" name="myPage" id="iframe"></iframe>
+  </body>
+
+  <script>
+    let showContent = document.getElementById("showContent");
+    let setBts = document.getElementsByClassName("btn");
+    let bts = document.getElementsByClassName("bt");
+
+    function handleClick(elem, arr, cls) {
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].className = cls;
+      }
+      elem.className = `${cls} active`;
+      showContent.innerText = `'${elem.innerText}' 操纵功能`;
+    }
+
+    // 循环添加右侧操作功能
+    for (let i = 0; i < setBts.length; i++) {
+      setBts[i].onclick = function () {
+        handleClick(this, setBts, this.className);
+      };
+    }
+
+    // 循环添加按钮1、2、3的功能
+    for (let i = 0; i < bts.length; i++) {
+      bts[i].onclick = function () {
+        handleClick(this, bts, this.className);
+      };
+    }
+  </script>
+</html>

@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  width: 405px;
+  height: 487px;
+  margin-top: 50px;
+  border: 1px solid #000;
+  border-radius: 10px 0px 10px 10px;
+}
+
+/* tab按钮 */
+.btnContent {
+  position: absolute;
+  top: -1px;
+  right: -33px;
+  width: 33px;
+  height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.btnContent .btn {
+  width: 33px;
+  height: 48px;
+  line-height: 48px;
+  display: inline-block;
+  border: 1px solid #000;
+  border-radius: 0px 10px 10px 0px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  background: #fff;
+}
+
+.btnContent .active {
+  width: 33px;
+  height: 48px;
+  background: #fff;
+  color: #0f0;
+  line-height: 48px;
+  display: inline-block;
+  border-left: 0px solid #fff;
+  border-radius: 0px 10px 10px 0px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 显示内容 */
+#showContent {
+  margin-top: 20px;
+  width: 305px;
+  height: 305px;
+  background: #d6d6d6;
+  border-radius: 20px;
+  border: 1px solid #000;
+  text-align: center;
+}
+
+#operateBox {
+  width: 305px;
+  height: 46px;
+  text-align: right;
+  line-height: 46px;
+  border-radius: 20px;
+  border: 1px solid #000;
+}
+
+#operateBox #btOpe {
+  width: 61px;
+  height: 28px;
+  background: #0f0;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 30px;
+  margin-right: 12px;
+}
+
+#buttonBox {
+  width: 305px;
+  height: 49px;
+}
+
+#buttonBox .bt {
+  width: 96px;
+  height: 49px;
+  border-radius: 20px;
+  border: 1px solid #000;
+  /* line-height: 49px; */
+}
+
+#buttonBox .bt:hover {
+  background: #87ec87;
+}
+
+#buttonBox .active {
+  background: #0f0;
+}
+
+#iframe {
+}

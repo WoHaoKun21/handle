@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        width: 900px;
+        height: 600px;
+        border: 1px solid #f00;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./build/three.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+    //                                                  构建投影相机
+    // 一、创建3D虚拟场景
+    const scene = new THREE.Scene();
+    // 二、创建集合体
+    const geometry = new THREE.ConeGeometry(1, 4, 8);
+    // 三、创建几何体外观
+    const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+    // 四、创建网格模式
+    const mesh = new THREE.Mesh(geometry, material);
+    // 五、设置模型位置
+    mesh.position.set(0, 0, 0);
+    // 六、添加模型到场景中
+    scene.add(mesh);
+    // 七、设置画布大小
+    const width = 900,
+      height = 600;
+    // 八、构建相机
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
+    // 九、设置相机位置
+    camera.position.set(200, 200, 200);
+    // 十、设置相机观察模型位置
+    camera.lookAt(mesh.position);
+
+    /*
+                                        构建投影相机
+        一、透视投影相机：Threejs提供了正投影相机"OrthographicCamera"(opens new window)和透视投影相机"PerspectiveCamera"(opens new window)
+            作用：透视投影相机本质就是模拟人眼观察这个世界的规律
+            使用：const camera = new THREE.PerspectiveCamera();
+        
+        二、相机位置：.position
+            使用：camera.position.set(200, 200, 200)
+
+        三、相机观察目标：.lookAt
+            使用：camera.lookAt(mesh.position)——指向mesh对应的位置
+
+        四、判断相机相对三维场景中长方体位置
+            使用：const geometry = new THREE.BoxGeometry( 100, 100, 100 ); // 长方体尺寸100, 100, 100
+                  const mesh = new THREE.Mesh(geometry,material);
+                  mesh.position.set(0,10,0); // 相机位置xyz坐标：0,10,0
+                  camera.position.set(200, 200, 200); // 相机位置xyz坐标：200, 200, 200
+        
+        五、定义相机渲染输出的画布尺寸
+            使用：const width = 800, height = 500
+
+        六、透视投影相机PerspectiveCamera：视锥体
+            视锥体：透视投影相机的四个参数fov, aspect, near, far构成一个四棱台3D空间，被称为视锥体，只有视锥体之内的物体，才会渲染出来，视锥体范围之外的物体不会显示在Canvas画布上。
+            使用：const width = 800, height = 500; // width和height用来设置Three.js输出的Canvas画布尺寸(像素px)
+                  const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000); // 30:视场角度, width / height:Canvas画布宽高比, 1:近裁截面, 3000：远裁截面
+            PerspectiveCamera(fov, aspect, near, far)四个参数介绍
+                fov：相机视锥体竖直方向视野角度
+                aspect：相机视锥体水平方向和竖直方向长度比，一般设置为Canvas画布宽高比
+                near：相机视锥体近裁截面相对相机距离
+                far：相机视锥体远裁截面相对相机距离，far-near构成了视锥体高度方向
+    */
+  </script>
+</html>
