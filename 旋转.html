@@ -27,32 +27,41 @@
         }
       }
       .container .item {
+        position: relative;
         width: 60px;
         height: 60px;
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #0099ff;
         background: url("./img/round.png") no-repeat center;
         background-size: contain;
         animation: rotate 3s linear infinite;
       }
+      .container .item .imgstyle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
       .container .item .text {
-        width: 20px;
-        height: 20px;
+        width: 25px;
+        height: 25px;
         border-radius: 50%;
         text-align: center;
-        line-height: 20px;
-        background-color: #f00;
+        color: #fff;
+        line-height: 25px;
+        background-color: #09f;
         font-size: 12px;
         animation: rotate 3s linear reverse infinite;
+        /* background: url("./img/bgImg.png"); */
       }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="item">
+        <img src="./img/icon.png" class="imgstyle" alt="" />
         <p class="text">个</p>
       </div>
     </div>
