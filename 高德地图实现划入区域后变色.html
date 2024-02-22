@@ -13,6 +13,10 @@
         width: 100vw;
         height: 100vh;
       }
+      .amap-maps canvas.amap-layer {
+        background: url("./img/bgImg.png") no-repeat center;
+        background-size: 100% 100%;
+      }
     </style>
     <script>
       window._AMapSecurityConfig = {
@@ -25,8 +29,21 @@
   </body>
   <script
     type="text/javascript"
-    src="https://webapi.amap.com/maps?v=2.0&key=514c99148afec38a187b745ddbd1e517&plugin=Map3D,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool,AMap.MarkerCluster"
+    src="https://webapi.amap.com/maps?v=1.4.15&key=514c99148afec38a187b745ddbd1e517&plugin=Map3D,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool,AMap.MarkerCluster,AMap.Object3D,AMap.Object3DLayer,AMap.GeoJSON"
   ></script>
+  <script src="./js/axios.js"></script>
   <script src="./js/高德地图实现划入区域后变色.js"></script>
-  <!-- <script src="./demo.js"></script> -->
+  <script type="text/javascript">
+    // // 获取城镇区划信息：http://www.maps4gis.com/json/%E5%B9%B3%E4%B9%A1%E5%8E%BF.html
+    // const data = [
+    //   {
+    //     lng: [115.070941024374, 115.070769024933],
+    //     lat: [37.0293930232445, 37.0267890231295],
+    //   },
+    // ];
+    // console.log(
+    //   "乡镇坐标：",
+    //   data[0].lng.map((i, n) => [i, data[0].lat[n]])
+    // );
+  </script>
 </html>
