@@ -1,0 +1,78 @@
+/* 标注样式 */
+.cstm-icon-panel {
+  position: relative;
+}
+.cstm-icon-panel .cstm-icon-name {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 120px;
+  height: 23px;
+  color: #0efefe;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 23px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* 关闭按钮 */
+.ant-modal-close .ant-modal-close-x {
+  width: 15px;
+  height: 15px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+/* 弹框样式 */
+.pop_zm {
+  position: relative;
+}
+.pop_zm .pop_content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1150px;
+  height: 550px;
+  background: url(../img/mapBoxImg.png) no-repeat;
+  background-size: 100% 100%;
+  cursor: pointer;
+}
+
+/* 弹框2样式 */
+.amap-marker-label {
+  z-index: 20;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+}
+.info {
+  display: flex;
+  justify-content: center;
+  width: 1200px;
+  height: 600px;
+  padding: 20px;
+  background: url(../img/mapBoxImg.png) no-repeat;
+  background-size: 100% 100%;
+}
+.info .pop_title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  background-color: #0903;
+  color: #f00;
+}
+
+.info .pop_title span {
+  display: block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 50%;
+  color: #000;
+  cursor: pointer;
+}
