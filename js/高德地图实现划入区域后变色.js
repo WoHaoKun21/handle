@@ -107,8 +107,6 @@ const initMap = () => {
     // 设置自定义图层的参数
     customLayer.render = function (opts, ee) {
       const ctx = opts.ctx;
-      console.log("自定义数据：", opts, ee);
-
       // // 设置透明度
       // ctx.globalAlpha = 0; // 设置为完全透明
       // // 绘制需要隐藏的区域
