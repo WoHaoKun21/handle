@@ -161,7 +161,8 @@
 }
 .progress_warn {
   background: linear-gradient(0deg, rgba(0, 198, 255, 0), #778dff);
-  animation: liner_warn 1s linear infinite;
+  animation: liner_warn 3s linear infinite;
+  /* transition: all ease-in-out 1s; */
 }
 .progress_error {
   background: linear-gradient(0deg, rgba(0, 198, 255, 0), #ffc119);
