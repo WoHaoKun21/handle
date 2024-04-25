@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-image: linear-gradient(
+      0deg,
+      rgba(0, 198, 255, 0.1),
+      rgba(0, 255, 106, 0.25),
+      rgba(0, 255, 106, 0.5),
+      rgba(0, 255, 106, 1)
+    );
+  }
+  25% {
+    background-image: linear-gradient(
+      0deg,
+      rgba(0, 255, 106, 1),
+      rgba(0, 198, 255, 0.1),
+      rgba(0, 255, 106, 0.25),
+      rgba(0, 255, 106, 0.5)
+    );
+  }
+  50% {
+    background-image: linear-gradient(
+      0deg,
+      rgba(0, 255, 106, 0.5),
+      rgba(0, 255, 106, 1),
+      rgba(0, 198, 255, 0.1),
+      rgba(0, 255, 106, 0.25)
+    );
+  }
+  75% {
+    background-image: linear-gradient(
+      0deg,
+      rgba(0, 255, 106, 0.25),
+      rgba(0, 255, 106, 0.5),
+      rgba(0, 255, 106, 1),
+      rgba(0, 198, 255, 0)
+    );
+  }
+  100% {
+    background-image: linear-gradient(
+      0deg,
+      rgba(0, 198, 255, 0.1),
+      rgba(0, 255, 106, 0.25),
+      rgba(0, 255, 106, 0.5),
+      rgba(0, 255, 106, 1)
+    );
+  }
+}
+/* 管道流动 */
+.container {
+  width: 300px;
+  height: 500px;
+  margin: 300px auto;
+  border: 1px solid #f00;
+  display: flex;
+  justify-content: space-around;
+}
+
+.progress {
+  width: 5px;
+  height: 62px;
+  margin-bottom: 10px;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 198, 255, 0),
+    rgba(0, 255, 106, 0.25),
+    rgba(0, 255, 106, 0.5),
+    rgba(0, 255, 106, 1)
+  );
+  animation: gradientAnimation 1s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+}
