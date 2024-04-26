@@ -2,7 +2,12 @@
   margin: 0;
   padding: 0;
 }
+.container {
+  display: flex;
+  justify-content: space-evenly;
+}
 
+/*                            管道流动                                   */
 @keyframes gradientAnimation {
   0% {
     background-image: linear-gradient(
@@ -51,16 +56,15 @@
   }
 }
 /* 管道流动 */
-.container {
-  width: 300px;
-  height: 500px;
-  margin: 300px auto;
+.progress_box {
+  width: 100px;
+  height: 100px;
   border: 1px solid #f00;
   display: flex;
   justify-content: space-around;
 }
 
-.progress {
+.progress_box .progress {
   width: 5px;
   height: 62px;
   margin-bottom: 10px;
@@ -72,4 +76,114 @@
     rgba(0, 255, 106, 1)
   );
   animation: gradientAnimation 1s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+}
+
+/*                            盒子闪烁                                   */
+.content {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  background-color: #09f;
+}
+
+/**内部圆圈**/
+.content .circle {
+  position: absolute;
+  z-index: 9;
+  width: 200px;
+  height: 200px;
+  /* top: 218px;
+  left: 165px; */
+  /* background-color: #f00; */
+  /* background-color: red; */
+  border: 1px solid #f00;
+  /*加入放大缩小动画  alternate：轮流播放，放大再放小  infinite：无限播放  ease-in-out：变化函数*/
+  /* animation: circleMove 0.7s alternate infinite ease-in-out; */
+}
+
+/**动画时外部渐变圈*/
+.content .circle::after {
+  z-index: 1;
+  position: absolute;
+  display: block;
+  content: "";
+  width: 200px;
+  height: 200px;
+  box-sizing: border-box;
+  background-color: #4ba776;
+  animation: outCircleMove 1.4s infinite ease-in-out;
+}
+
+/**定义放大缩小动画**/
+@keyframes circleMove {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.2);
+  }
+}
+
+/**定义扩散全放大缩小动画**/
+@keyframes outCircleMove {
+  /**0%~50% 0s~ 0.7s前的时间 此时内圈放大，扩散圈等待时机出现**/
+  0% {
+    opacity: 0;
+  }
+  /**10% 此时内圈已经放大一段时间， 扩散全显示opacity设为1，倍率为1 **/
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  /**50%到100%是动画0.7s~1.4s的时间 此时内圈缩小，扩散圈变为1.3倍，但是透明度设为0**/
+  50%,
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+/*                            边框流动                                   */
+.box {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  border-radius: 20px;
+  margin-left: 40px;
+}
+.box:before {
+  content: "";
+  position: absolute;
+  width: 150px;
+  height: 125%;
+  background: linear-gradient(315deg, #00ccff, #d400d4);
+  animation: animate 4s linear infinite;
+}
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.box:after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  background: #0e1538;
+  border-radius: 15px;
+  z-index: 2;
+}
+h2 {
+  position: relative;
+  z-index: 2;
+  font-size: 10em;
+  color: #fff;
+  z-index: 4;
 }
