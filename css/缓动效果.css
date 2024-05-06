@@ -8,26 +8,7 @@
 }
 
 /*                            边框流动                                   */
-.box {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  padding: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #090;
-  overflow: hidden;
-  border-radius: 4px;
-}
-.box:before {
-  content: "";
-  position: absolute;
-  width: auto;
-  height: auto;
-  background: #778dff;
-  animation: animate 4s linear infinite;
-}
+
 @keyframes animate {
   0% {
     width: 20%;
@@ -56,11 +37,30 @@
   }
 }
 
+.box {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #090;
+  overflow: hidden;
+  border-radius: 4px;
+}
+p.ani {
+  position: absolute;
+  width: auto;
+  height: auto;
+  background: #778dff;
+  animation: animate 4s linear infinite;
+}
 .box_content {
   position: relative;
   z-index: 2;
   color: #fff;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   background: #0e1538;
 }
