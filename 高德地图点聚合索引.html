@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+    <script>
+      window._AMapSecurityConfig = {
+        securityJsCode: "16f81296c450f8bb5149a86056dae9c8",
+      };
+    </script>
+  </head>
+  <body>
+    <div id="container" class="map" tabindex="0"></div>
+  </body>
+  <script src="https://a.amap.com/jsapi_demos/static/data/community.js"></script>
+  <script src="https://a.amap.com/jsapi_demos/static/data/district.js"></script>
+  <script
+    type="text/javascript"
+    src="https://webapi.amap.com/maps?v=2.0&key=514c99148afec38a187b745ddbd1e517&plugin=Map3D,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool,AMap.MarkerCluster,AMap.IndexCluster"
+  ></script>
+  <script src="./js/高德地图点聚合索引.js"></script>
+</html>
