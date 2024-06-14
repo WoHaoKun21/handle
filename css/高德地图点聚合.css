@@ -1,5 +1,4 @@
-/* marker标签样式 */
-.amap-marker.active {
+marker标签样式 .amap-marker.active {
   z-index: 20 !important;
 }
 .amap-marker .amap-marker-label {
@@ -9,6 +8,7 @@
 }
 .amap-marker .amap-marker-label .cstm-icon-panel {
   position: relative;
+  user-select: none;
 }
 .cstm-icon-panel .cstm-icon-name {
   position: absolute;

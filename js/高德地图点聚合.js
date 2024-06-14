@@ -2,7 +2,8 @@ let map;
 
 const count = waterArr.length;
 
-const _renderClusterMarker = function (context) {
+// 聚合后样式
+const _renderClusterMarker = (context) => {
   let bgColor = ""; // 聚合点颜色
   // 聚合中点个数
   const clusterCount = context.count;
@@ -36,28 +37,32 @@ const _renderClusterMarker = function (context) {
   div.style.color = "#ffffff";
   div.style.fontSize = "12px";
   div.style.textAlign = "center";
+  div.style.userSelect = "none";
   context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
   context.marker.setContent(div);
 };
-const _renderMarker = function (context) {
+
+// 非聚合站点样式
+const _renderMarker = (context) => {
   const { id, coord, status, name } = context.data[0];
-  const [lng, lat] = coord.split(",").map(Number);
-  const html = `<div class="cstm-icon-panel" id="icon-${id}">
-      <div class="cstm-icon-name">${name}</div>
-      <div class="cstm-icon-img">
-        <img src=${
-          status === 0 ? "/img/dwImg.png" : "/img/errdwlmg.png"
-        } style="width: 40px" />
-      </div>
+  // const [lng, lat] = coord.split(",").map(Number);
+  const html = `
+  <div class="cstm-icon-panel" id="icon-${id}">
+    <div class="cstm-icon-name">${name}</div>
+    <div class="cstm-icon-img">
+      <img src=${
+        status === 0 ? "/img/dwImg.png" : "/img/errdwlmg.png"
+      } style="width: 40px" />
+    </div>
   </div>`;
   context.marker.setContent(html);
-  context.marker.on("click", () =>
-    flayPopHtml(context.marker, context.data[0])
-  );
+  context.marker.on("click", () => {
+    flayPopHtml(context.marker, context.data[0]);
+  });
 };
 
 // 弹框生成
-const flayPopHtml = (marker, item) => {
+const flayPopHtml = async (marker, item) => {
   map.getAllOverlays().map((o) => {
     if (o.type === "AMap.Marker") o.setLabel({ content: "" });
   });
@@ -66,8 +71,9 @@ const flayPopHtml = (marker, item) => {
   marker.setLabel({
     direction: "top",
     offset: new AMap.Pixel(0, -20),
-    content: `<div class="pop_zm" id="pop-${item.id}">loading......</div>`,
+    content: `<div class="pop_zm" id="pop-${item.id}">${item.name}loading......</div>`,
   });
+  console.log("弹框内容：", marker.getLabel()); // 能获取到弹窗的内容
 };
 
 // 初始化地图
@@ -89,12 +95,14 @@ const initMap = (list) => {
       lnglat: [lng, lat],
     };
   });
+
   // 标注聚合
   const cluster = new AMap.MarkerCluster(map, list, {
     gridSize: 60, // 聚合网格像素大小
-    renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
-    renderMarker: _renderMarker, // 自定义非聚合点样式
+    renderClusterMarker: _renderClusterMarker, // 自定义聚合后的样式
+    renderMarker: _renderMarker, // 自定义非聚合站点样式
   });
+
   // 地图点击事件
   map.on("click", function (e) {
     console.log([e.lnglat.lng, e.lnglat.lat]);
