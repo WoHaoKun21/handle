@@ -1,9 +1,7 @@
-const map = new AMap.Map("container", {
-  center: [104.937478, 35.439575],
-  mapStyle: "amap://styles/grey",
-  zoom: 5,
-});
-const count = points.length;
+let map;
+
+const count = waterArr.length;
+
 const _renderClusterMarker = function (context) {
   let bgColor = ""; // 聚合点颜色
   // 聚合中点个数
@@ -42,14 +40,66 @@ const _renderClusterMarker = function (context) {
   context.marker.setContent(div);
 };
 const _renderMarker = function (context) {
-  const content =
-    '<div style="background-color: rgba(255,255,178,.9); height: 18px; width: 18px; border: 1px solid rgba(255,255,178,1); border-radius: 12px; box-shadow: rgba(0, 0, 0, 1) 0px 0px 3px;"></div>';
-  const offset = new AMap.Pixel(-9, -9);
-  context.marker.setContent(content);
-  context.marker.setOffset(offset);
+  const { id, coord, status, name } = context.data[0];
+  const [lng, lat] = coord.split(",").map(Number);
+  const html = `<div class="cstm-icon-panel" id="icon-${id}">
+      <div class="cstm-icon-name">${name}</div>
+      <div class="cstm-icon-img">
+        <img src=${
+          status === 0 ? "/img/dwImg.png" : "/img/errdwlmg.png"
+        } style="width: 40px" />
+      </div>
+  </div>`;
+  context.marker.setContent(html);
+  context.marker.on("click", () =>
+    flayPopHtml(context.marker, context.data[0])
+  );
 };
-const cluster = new AMap.MarkerCluster(map, points, {
-  gridSize: 60, // 聚合网格像素大小
-  renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
-  renderMarker: _renderMarker, // 自定义非聚合点样式
-});
+
+// 弹框生成
+const flayPopHtml = (marker, item) => {
+  map.getAllOverlays().map((o) => {
+    if (o.type === "AMap.Marker") o.setLabel({ content: "" });
+  });
+  marker.dom.classList.add("active");
+  map.setFitView([marker], false, [0, 0, 0, 0], 14);
+  marker.setLabel({
+    direction: "top",
+    offset: new AMap.Pixel(0, -20),
+    content: `<div class="pop_zm" id="pop-${item.id}">loading......</div>`,
+  });
+};
+
+// 初始化地图
+const initMap = (list) => {
+  map = new AMap.Map("container", {
+    zoom: 10.8,
+    zooms: [5, 18], // 缩放范围
+    resizeEnable: true,
+    showLabel: false, // 不显示地图文字标记
+    center: [119.820345878417969, 30.0343912775878906],
+  });
+  // 构造卫星图层
+  satelliteLayer = new AMap.TileLayer.Satellite();
+  map.add(satelliteLayer); // 添加卫星图层
+  list = list.map((item) => {
+    const [lng, lat] = item.coord.split(",").map(Number);
+    return {
+      ...item,
+      lnglat: [lng, lat],
+    };
+  });
+  // 标注聚合
+  const cluster = new AMap.MarkerCluster(map, list, {
+    gridSize: 60, // 聚合网格像素大小
+    renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
+    renderMarker: _renderMarker, // 自定义非聚合点样式
+  });
+  // 地图点击事件
+  map.on("click", function (e) {
+    console.log([e.lnglat.lng, e.lnglat.lat]);
+  });
+};
+
+// 地图加载
+initMap(waterArr);

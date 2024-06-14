@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/高德地图信息框放大.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+    <script>
+      window._AMapSecurityConfig = {
+        securityJsCode: "16f81296c450f8bb5149a86056dae9c8",
+      };
+    </script>
+  </head>
+  <body>
+    <div id="container" class="map" tabindex="0"></div>
+  </body>
+  <script>
+    const click = document.getElementById("container");
+    let fuyang, water;
+    fetch("/json/fuyang.json")
+      .then((res) => res.json())
+      .then((res) => {
+        fuyang = res;
+      });
+    fetch("/json/water.json")
+      .then((res) => res.json())
+      .then((res) => {
+        water = res;
+      });
+
+    click.onclick = () => {
+      console.log(fuyang, water);
+    };
+  </script>
+</html>

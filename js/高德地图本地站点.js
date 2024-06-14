@@ -86,14 +86,14 @@ const mapMask = (AMap) => {
 const getMapData = async () => {
   const pathLine = []; // 存储闸门站点坐标
   const res = await fetch("../json/高德地图点聚合.json").then((r) => r.json());
-  const { waterStation, rainStation, jkStation, zkStation } = res.data;
+  const { waterStation, rainStation, jkStation, zkStation } = res;
   map.getAllOverlays().forEach((item) => {
     if (item.CLASS_NAME === "AMap.Marker") return item.remove();
   });
   console.log("数据结构：", res);
   // 生成水位标注
-  if (waterStation && waterStation.length > 0) {
-    waterStation.map((item) => {
+  if (zkStation && zkStation.length > 0) {
+    zkStation.map((item) => {
       const marker = createIcon(item, "water");
       marker.on("click", (e) => {
         const position = e.target.getPosition();
@@ -104,33 +104,16 @@ const getMapData = async () => {
 };
 
 // 生成地图标注
-const mapMarker = (obj = {}, type) => {
+const createIcon = (obj = {}, type) => {
   const { id, lng, lat, status } = obj;
-  //   const html = ReactDOMServer.renderToString(
-  //     <div className="cstm-icon-panel" id={`icon-${id}`}>
-  //       <div className="cstm-icon-img">
-  //         {type === "zk" ? (
-  //           <img
-  //             src={
-  //               status === 1 ? "/bigscreen/coord1.png" : "/bigscreen/coord2.png"
-  //             }
-  //             style={{ width: 37 }}
-  //           />
-  //         ) : type === "video" ? (
-  //           <img src={"/bigscreen/video2.png"} style={{ width: 30 }} />
-  //         ) : type === "water" ? (
-  //           <img src={"/bigscreen/img1.png"} style={{ width: 30 }} />
-  //         ) : type === "rain" ? (
-  //           <img src={"/bigscreen/rain.png"} style={{ width: 30 }} />
-  //         ) : (
-  //           ""
-  //         )}
-  //       </div>
-  //     </div>
-  //   );
+  const html = ` <div class="cstm-icon-panel" id="icon-${id}"}>
+      <div class="cstm-icon-img">
+          <img src="/img/dwImg.png" style="width: 30;" />
+      </div>
+    </div>`;
   const marker = new AMap.Marker({
     map,
-    content: "12456",
+    content: html,
     position: [lng, lat],
     offset: new AMap.Pixel(-22, -37),
   });
