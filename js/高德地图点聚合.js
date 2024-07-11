@@ -74,6 +74,12 @@ const flayPopHtml = (marker, item) => {
   map.setFitView(marker, false, [680, 0, 0, -380], 14);
   setTimeout(() => {
     infoWindow.open(map, item.coord.split(",").map(Number));
+    document.getElementById("pop_box").innerHTML = `
+      <div class="pop_content">
+        <input type='text' />
+        <p>${item.name}</p>
+      </div>
+    `;
   }, 300);
 };
 

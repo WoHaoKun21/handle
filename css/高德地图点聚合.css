@@ -1,4 +1,5 @@
-marker标签样式 .amap-marker.active {
+/* marker标签样式  */
+.amap-marker.active {
   z-index: 20 !important;
 }
 .amap-marker .amap-marker-label {
@@ -43,9 +44,16 @@ marker标签样式 .amap-marker.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 400px;
-  height: 200px;
+  width: 1350px;
+  height: 640px;
   background: #082c2a;
+}
+.pop_zm .pop_content {
+  width: 100%;
+  height: 100%;
+}
+.pop_zm .pop_content input {
+  outline: none;
 }
 
 /* 聚合标注样式 */
