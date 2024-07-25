@@ -1,30 +1,37 @@
-let mediaRecorder; // 录音实例
-const chunks = []; // 录音文件
 const record = document.getElementById("record"); // 获取开始录音按钮
-const playBtn = document.getElementById("player"); // 获取播放录音按钮
+const player = document.getElementById("player"); // 获取播放录音按钮
 
-// 获取录音权限
+// 预先设置一个变量来存MediaRecorder实例对象
+let mediaRecorder = null;
+let urlFile = null; // 录制好的音频，用于传给后端
+// 首先打开麦克风，并进行监听
 if (navigator.mediaDevices.getUserMedia) {
-  const constraints = { audio: true }; // 录音约束配置
-  navigator.mediaDevices.getUserMedia(constraints).then(
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(
     (stream) => {
-      // stream为录音媒体对象
+      let chunks = []; // 存储录制的音频
       mediaRecorder = new MediaRecorder(stream);
-      console.log("授权成功对象：", mediaRecorder);
-      // 监听录音事件
-      mediaRecorder.ondataavailable = function (e) {
+
+      // 录音开始事件监听（即调用 mediaRecorder.start()时会触发该事件）
+      mediaRecorder.onstart = () => {
+        console.log("录音开始");
+      };
+
+      // 录音可用事件监听，发生于mediaRecorder.stop()调用后，mediaRecorder.onstop 前
+      mediaRecorder.ondataavailable = (e) => {
+        console.log("dataavailable");
         chunks.push(e.data);
       };
-      mediaRecorder.onstop = (e) => {
-        console.log("暂停：", chunks);
-        // const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-        // chunks = [];
-        // const audioURL = window.URL.createObjectURL(blob);
-        // audio.src = audioURL;
+
+      // 录音结束事件监听，发生在mediaRecorder.stop()和 mediaRecorder.ondataavailable 调用后
+      mediaRecorder.onstop = () => {
+        let blob = new Blob(chunks, { type: "audio/webm;codecs=opus" }); // 获取到录音的blob
+        urlFile = new window.File([blob], "record.webm"); // 将blob转换为file对象，名字可以自己改，一般用于需要将文件上传到后台的情况
+        let url = (window.URL || webkitURL).createObjectURL(blob); // 将blob转换为地址，一般用于页面上面的回显，这个url可以直接被 audio 标签使用
+        player.src = url; // 将录制好的音频赋值给播放器
       };
     },
     (err) => {
-      console.log("授权失败：", err);
+      alert("授权失败：", err);
     }
   );
 } else {
@@ -42,5 +49,5 @@ record.onclick = () => {
     console.log("录音中...");
     record.textContent = "停止";
   }
-  console.log("录音器状态：", mediaRecorder.state, chunks);
+  console.log("录音器状态：", mediaRecorder);
 };
