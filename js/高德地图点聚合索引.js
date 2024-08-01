@@ -43,8 +43,8 @@ const getStyle = (context) => {
   const size = Math.round(30 + Math.pow(count / points.length, 1 / 5) * 70);
   if (i <= 2) {
     const extra = '<span class="showCount">' + context.count + "套</span>";
-    text = '<span class="showName">' + text + "</span>";
-    text += extra;
+    // text = `<span class="showName">${text}</span>`;
+    // text += extra;
   } else {
     size = 12 * text.length + 20;
   }

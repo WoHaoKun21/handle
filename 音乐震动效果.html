@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      ul {
+        width: 698px;
+        height: 600px;
+        background: #28004d;
+        display: flex;
+        justify-content: space-around;
+        position: relative;
+      }
+      li {
+        width: 50px;
+        height: 200px;
+        background-color: #d3a4ff;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </body>
+  <script>
+    var lis = document.querySelectorAll("li");
+
+    var ul = document.querySelector("ul");
+
+    //给所有的li设置左右位置
+
+    for (var i = 0; i < lis.length; i++) {
+      lis[i].style.left = i * 72 + "px";
+    }
+
+    //给所有的li设置随机高度
+
+    var timer = setInterval(function () {
+      for (var i = 0; i < lis.length; i++) {
+        var h = Math.floor(Math.random() * 590);
+
+        lis[i].style.height = h + "px";
+      }
+    }, 100);
+  </script>
+</html>
