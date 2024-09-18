@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 唤起H5的拨号功能需要计入下面这个meta标签 -->
+    <meta name="format-detection" content="telephone=yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+      }
+      .container {
+        padding: 60px 0px;
+        text-align: center;
+      }
+      a {
+        display: inline-block;
+        border: 1px solid #cecece;
+        width: 100px;
+        height: 40px;
+        border-radius: 5px;
+        background-color: #90cdf6;
+        cursor: pointer;
+        text-align: center;
+        line-height: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <!-- 该效果在手机端运行生效，PC端无法查找对应 -->
+      <a href="tel:15027805647" id="phone">拨打电话</a>
+      <a href="sms:15027805647?body=你好" id="email">发送短信</a>
+    </div>
+  </body>
+  <script>
+    const phone = document.getElementById("phone");
+    const email = document.getElementById("email");
+  </script>
+</html>
