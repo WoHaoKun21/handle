@@ -4,8 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="./Cesium/Cesium.js"></script>
+    <link rel="stylesheet" href="./Cesium/Widgets/widgets.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 14px;
+      }
+      .container {
+        width: 100vw;
+        height: 100vh;
+      }
+      .container #cesiumDom {
+        width: 100%;
+        height: 100%;
+        background-color: #0000;
+      }
+      .cesium-widget-credits {
+        /* 去除logo */
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
-    <div class="container"><div id="cesiumDom" /></div>
+    <div class="container">
+      <div id="cesiumDom"></div>
+    </div>
   </body>
+  <!-- <script src="./js/cesium封装.js"></script> -->
+  <script src="./js/cesium三维地图.js"></script>
 </html>
