@@ -21,39 +21,6 @@ const option = {
   contextOptions: { webgl: { alpha: true } }, // 天空背景为纯色的前提
 };
 
-// 初始化Cesium3维地图
-const initCesiumMap = async () => {
-  // 默认定位到中国，参数依次为东西南北
-  Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
-    75.0,
-    0.0,
-    140.0,
-    60.0
-  );
-  viewer = new Cesium.Viewer(cesiumDom, option); // 初始化地图
-
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(
-      121.10016246000218,
-      30.420379951166946,
-      50000
-    ),
-    orientation: {
-      pitch: Cesium.Math.toRadians(-60),
-    },
-  });
-
-  viewer.scene.sun.show = false; // 关闭天空太阳
-  viewer.scene.moon.show = false; // 关闭天空月亮
-  // viewer.scene.skyBox.show = false; // 关闭天空盒，否则会显示天空颜色
-  // viewer.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0); // 关闭天空后，设置天空颜色
-  // viewer.scene.globe.show = false; // 不显示地球
-
-  // 展示指定城市地图
-  const data = await fetch("../json/pinghu.json").then((res) => res.json());
-  addCityArea(data); // 展示城市范围
-};
-
 // 加载指定城市区域
 const addCityArea = (geojson) => {
   const arr = [];
@@ -101,8 +68,47 @@ const addCityArea = (geojson) => {
   });
   // 将实例对象展示在场景中
   viewer.scene.primitives.add(primitive);
+};
+// 初始化Cesium3维地图——测试版
+const initCesiumMap = async () => {
+  // 默认定位到中国，参数依次为东西南北
+  Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
+    75.0,
+    0.0,
+    140.0,
+    60.0
+  );
+  viewer = new Cesium.Viewer(cesiumDom, option); // 初始化地图
 
-  console.log("地图条件显示：", primitive); // viewer.scene.globe,
+  // viewer.camera.setView({
+  //   destination: Cesium.Cartesian3.fromDegrees(
+  //     121.10016246000218,
+  //     30.420379951166946,
+  //     50000
+  //   ),
+  //   orientation: {
+  //     pitch: Cesium.Math.toRadians(-60),
+  //   },
+  // });
+
+  viewer.scene.sun.show = false; // 关闭天空太阳
+  viewer.scene.moon.show = false; // 关闭天空月亮
+  viewer.scene.undergroundMode = true; //重要，开启地下模式，设置基色透明，这样就看不见黑色地球了
+  viewer.scene.skyBox.show = false; // 关闭天空盒，否则会显示天空颜色
+  viewer.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0); // 关闭天空后，设置天空颜色
+  // viewer.scene.globe.show = false; // 不显示地球
+  viewer.scene.globe.baseColor = new Cesium.Color(0, 0, 0, 0);
+  // viewer.scene.imageryLayers.removeAll(); // 去除其他图层
+
+  // var provider = new Cesium.UrlTemplateImageryProvider({
+  //   url: "../img/water.jpg",
+  // });
+  // viewer.imageryLayers.addImageryProvider(provider);
+
+  // 展示指定城市地图
+  const data = await fetch("../json/pinghu.json").then((res) => res.json());
+  addCityArea(data); // 展示城市范围
 };
 
+// 初始化三维地图
 initCesiumMap();
