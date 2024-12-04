@@ -45,9 +45,12 @@ const initCesiumMap = async () => {
 
   viewer.scene.sun.show = false; // 关闭天空太阳
   viewer.scene.moon.show = false; // 关闭天空月亮
+  // viewer.scene.undergroundMode = true; //重要，开启地下模式，设置基色透明，这样就看不见黑色地球了
   // viewer.scene.skyBox.show = false; // 关闭天空盒，否则会显示天空颜色
   // viewer.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0); // 关闭天空后，设置天空颜色
   // viewer.scene.globe.show = false; // 不显示地球
+  // viewer.scene.globe.baseColor = new Cesium.Color(0, 0, 0, 0);
+  // viewer.scene.imageryLayers.removeAll(); // 去除其他图层
 
   // 展示指定城市地图
   const data = await fetch("../json/pinghu.json").then((res) => res.json());

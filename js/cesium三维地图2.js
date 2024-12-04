@@ -1,3 +1,4 @@
+// Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NTQ1NzViMS01ZDE0LTQzZDQtOGJkYi0xNjE0OThkNjNlM2IiLCJpZCI6MTczMzMwLCJpYXQiOjE3MzMzMDI2NDl9.u5aqxhYFmwy_ntbdrY0f7Q172iKOwY0t3-av-FZNlbM';
 const cesiumDom = document.getElementById("cesiumDom");
 let viewer; // cesium3D地图实例
 
@@ -21,10 +22,30 @@ const option = {
   contextOptions: { webgl: { alpha: true } }, // 天空背景为纯色的前提
 };
 
-// 加载指定城市区域
-const addCityArea = (geojson) => {
+// 裁剪城市
+const clippingCity = (geojson) => {
+  // 1、创建边界数据存储变量
   const arr = [];
-  // 解析geojson数据，将边界数据添加到数组
+  // 2、解析geojson数据，将边界数据添加到数组
+  geojson.features[0].geometry.coordinates[0][0].forEach((item) => {
+    arr.push(item[0]), arr.push(item[1]);
+  });
+  // 3、将地理坐标（经度和纬度）转换为三维空间中的笛卡尔坐标
+  const positions = Cesium.Cartesian3.fromDegreesArray(arr);
+  // 4、对地图进行裁剪，只会展示裁剪后的区域
+  const clippingPolygons = new Cesium.ClippingPolygonCollection({
+    polygons: [new Cesium.ClippingPolygon({ positions, heihgt: 500 })],
+  });
+  // 5、是否反选裁剪多边形
+  clippingPolygons.inverse = true;
+  // 6、获取当前的裁剪多边形集合并展示在地图上
+  viewer.scene.globe.clippingPolygons = clippingPolygons;
+};
+
+const addCityAreaHeight = (geojson, heihgt) => {
+  // 1、创建边界数据存储变量
+  const arr = [];
+  // 2、解析geojson数据，将边界数据添加到数组
   geojson.features[0].geometry.coordinates[0][0].forEach((item) => {
     arr.push(item[0]), arr.push(item[1]);
   });
@@ -39,8 +60,8 @@ const addCityArea = (geojson) => {
       Cesium.Cartesian3.fromDegreesArray(arr),
       [new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(arr))]
     ),
-    heihgt: -5000,
-    extrudedHeight: -5000,
+    heihgt,
+    extrudedHeight: heihgt,
   });
 
   // 将创建的多边形添加到场景中
@@ -52,7 +73,7 @@ const addCityArea = (geojson) => {
       geometry: geometry,
       attributes: {
         color: Cesium.ColorGeometryInstanceAttribute.fromColor(
-          Cesium.Color.fromCssColorString("#89b4e3")
+          Cesium.Color.fromCssColorString("rgba(255,255,0,0.3)")
         ),
       },
     }),
@@ -69,6 +90,7 @@ const addCityArea = (geojson) => {
   // 将实例对象展示在场景中
   viewer.scene.primitives.add(primitive);
 };
+
 // 初始化Cesium3维地图——测试版
 const initCesiumMap = async () => {
   // 默认定位到中国，参数依次为东西南北
@@ -80,34 +102,78 @@ const initCesiumMap = async () => {
   );
   viewer = new Cesium.Viewer(cesiumDom, option); // 初始化地图
 
-  // viewer.camera.setView({
-  //   destination: Cesium.Cartesian3.fromDegrees(
-  //     121.10016246000218,
-  //     30.420379951166946,
-  //     50000
-  //   ),
-  //   orientation: {
-  //     pitch: Cesium.Math.toRadians(-60),
-  //   },
-  // });
+  // 跳转视角到指定城市
+  viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(
+      121.10016246000218,
+      30.420379951166946,
+      50000
+    ),
+    orientation: {
+      pitch: Cesium.Math.toRadians(-60),
+    },
+  });
 
-  viewer.scene.sun.show = false; // 关闭天空太阳
-  viewer.scene.moon.show = false; // 关闭天空月亮
-  viewer.scene.undergroundMode = true; //重要，开启地下模式，设置基色透明，这样就看不见黑色地球了
-  viewer.scene.skyBox.show = false; // 关闭天空盒，否则会显示天空颜色
-  viewer.scene.backgroundColor = new Cesium.Color(0, 0, 0, 0); // 关闭天空后，设置天空颜色
-  // viewer.scene.globe.show = false; // 不显示地球
-  viewer.scene.globe.baseColor = new Cesium.Color(0, 0, 0, 0);
-  // viewer.scene.imageryLayers.removeAll(); // 去除其他图层
+  // 加载地图边界数据
+  const geojson = await fetch("../json/pinghu.json").then((res) => res.json());
+  clippingCity(geojson);
+  // 为裁剪区域填充高度
+  addCityAreaHeight(geojson, -1600);
+  viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(
+      121.08907438222772,
+      30.702987136907296
+    ),
+    billboard: {
+      image: "./img/water.jpg",
+      scale: 0.3,
+      color: Cesium.Color.YELLOW,
+    },
+  });
+  viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(
+      121.08907438222772,
+      30.702987136907296
+    ),
+    label: {
+      text: "Cesium",
+      pixelOffset: new Cesium.Cartesian2(0, -20),
+      fillColor: Cesium.Color.YELLOWGREEN, // 颜色变量
+      showBackground: true,
+      backgroundColor: new Cesium.Color(255, 255, 0), // new 因为后面是个类 要实例化
+    },
+  });
 
-  // var provider = new Cesium.UrlTemplateImageryProvider({
-  //   url: "../img/water.jpg",
-  // });
-  // viewer.imageryLayers.addImageryProvider(provider);
-
-  // 展示指定城市地图
-  const data = await fetch("../json/pinghu.json").then((res) => res.json());
-  addCityArea(data); // 展示城市范围
+  // 地图点击事件
+  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction((event) => {
+    let mapPosition = {};
+    const pick1 = viewer.scene.pickPosition(event.position);
+    const pick2 = viewer.scene.camera.pickEllipsoid(event.position);
+    const ray = viewer.camera.getPickRay(event.position);
+    const pick3 = viewer.scene.globe.pick(ray, viewer.scene);
+    // 是否都获得了有效值
+    if (
+      Cesium.defined(pick1) &&
+      Cesium.defined(pick2) &&
+      Cesium.defined(pick3)
+    ) {
+      const pickArray = [pick1, pick2, pick3];
+      pickArray.forEach((item) => {
+        // 笛卡尔坐标系转为经纬度（弧度）坐标
+        const cartographic = Cesium.Cartographic.fromCartesian(item);
+        // 再将经纬度（弧度）坐标转化为经纬度角度坐标
+        const lat = Cesium.Math.toDegrees(cartographic.latitude);
+        const lng = Cesium.Math.toDegrees(cartographic.longitude);
+        mapPosition = {
+          x: lng,
+          y: lat,
+          z: cartographic.height,
+        };
+        console.log("鼠标点击的点坐标：", mapPosition);
+      });
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 };
 
 // 初始化三维地图
