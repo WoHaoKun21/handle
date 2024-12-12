@@ -99,9 +99,7 @@ const addMarker2 = () => {
             <p class="pop_title">${item.name} <span id="closeBtn">X</span></p>
         </div>`, //设置文本标注内容
       });
-      document.getElementById("closeBtn").addEventListener("click", () => {
-        closePop(marker);
-      });
+      document.getElementById("closeBtn").onclick = () => closePop(marker);
     });
   });
 };
