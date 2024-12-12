@@ -55,6 +55,7 @@
     let count; // 存储定时器
     // 2023-05-30 14:30:25
     action.onclick = function () {
+      clearInterval(count); // 停止定时器
       const times = inputValue.value; // 输入框的时间
       time.innerText = times;
       count = setInterval(function () {

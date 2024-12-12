@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>坐标格式处理</title>
+    <script>
+      window._AMapSecurityConfig = {
+        securityJsCode: "16f81296c450f8bb5149a86056dae9c8",
+      };
+    </script>
+  </head>
+  <body>
+    <div id="container" class="map" />
+  </body>
+
+  <script src="./js/区域数据.js"></script>
+  <script type="text/javascript">
+    // 获取城镇区划信息：http://www.maps4gis.com/json/%E5%B9%B3%E4%B9%A1%E5%8E%BF.html
+    let data = coordData.filter(Boolean);
+    data = [data[0], data[2]];
+    const result = data.map((item) => {
+      const obj = {};
+      const coord = item.map((obj, index) => {
+        if (Array.isArray(obj)) {
+          obj.map((item) => {
+            console.log(index, item[0]);
+          });
+        } else {
+          // console.log("村子：", obj);
+        }
+      });
+    });
+  </script>
+</html>

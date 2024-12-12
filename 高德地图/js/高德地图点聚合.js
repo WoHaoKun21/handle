@@ -58,7 +58,7 @@ const _renderMarker = (context) => {
     <div class="cstm-icon-name">${name}</div>
     <div class="cstm-icon-img">
       <img src=${
-        status === 0 ? "/img/dwImg.png" : "/img/errdwlmg.png"
+        status === 0 ? "./img/dwImg.png" : "./img/errdwlmg.png"
       } style="width: 40px" />
     </div>
   </div>`;

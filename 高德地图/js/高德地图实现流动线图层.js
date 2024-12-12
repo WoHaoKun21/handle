@@ -7,7 +7,7 @@ const createIcon = (obj) => {
     <div class="cstm-icon-panel" id="icon-${id}"}>
       <div class="cstm-icon-img">
           <img src=${
-            status === 1 ? "/img/dwImg.png" : "/img/errdwlmg.png"
+            status === 1 ? "./img/dwImg.png" : "./img/errdwlmg.png"
           } style="width: 55px;" />
       </div>
     </div>`;
@@ -77,7 +77,7 @@ const addLinePath = (coordinates) => {
 // 二、获得闸门数据
 const initialState = async () => {
   const pathLine = [];
-  const { zkStation } = await fetch("../json/高德地图点聚合.json").then((r) =>
+  const { zkStation } = await fetch("./json/高德地图点聚合.json").then((r) =>
     r.json()
   );
   map.getAllOverlays().forEach((item) => {
@@ -116,7 +116,7 @@ const initMap = () => {
     // 标注文字内容
     text: `
     <p style="display: flex;align-items: center;text-shadow: #fff 1px 0px 1px;color: #000;user-select: none;">
-      <img src="/img/start.png" style="width: 15px;margin-right: 5px" />丽水市人民政府
+      <img src="./img/start.png" style="width: 15px;margin-right: 5px" />丽水市人民政府
     </p>`,
     position: [119.927049, 28.467165], // 标注位置（经纬度）
     anchor: "center", // 锚点位置

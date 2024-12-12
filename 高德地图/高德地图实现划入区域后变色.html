@@ -27,23 +27,9 @@
   <body>
     <div id="container" class="map" />
   </body>
-
-  <script src="./js/区域数据.js"></script>
-  <script type="text/javascript">
-    // 获取城镇区划信息：http://www.maps4gis.com/json/%E5%B9%B3%E4%B9%A1%E5%8E%BF.html
-    let data = coordData.filter(Boolean);
-    data = [data[0], data[2]];
-    const result = data.map((item) => {
-      const obj = {};
-      const coord = item.map((obj, index) => {
-        if (Array.isArray(obj)) {
-          obj.map((item) => {
-            console.log(index, item[0]);
-          });
-        } else {
-          // console.log("村子：", obj);
-        }
-      });
-    });
-  </script>
+  <script
+    type="text/javascript"
+    src="https://webapi.amap.com/maps?v=1.4.15&key=514c99148afec38a187b745ddbd1e517&plugin=Map3D,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool,AMap.MarkerCluster,AMap.Object3D,AMap.Object3DLayer,AMap.GeoJSON"
+  ></script>
+  <script src="./js/高德地图实现划入区域后变色.js"></script>
 </html>

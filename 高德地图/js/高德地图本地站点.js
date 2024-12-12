@@ -85,7 +85,7 @@ const mapMask = (AMap) => {
 // 获取地图数据
 const getMapData = async () => {
   const pathLine = []; // 存储闸门站点坐标
-  const res = await fetch("../json/高德地图点聚合.json").then((r) => r.json());
+  const res = await fetch("./json/高德地图点聚合.json").then((r) => r.json());
   const { waterStation, rainStation, jkStation, zkStation } = res;
   map.getAllOverlays().forEach((item) => {
     if (item.CLASS_NAME === "AMap.Marker") return item.remove();
@@ -108,7 +108,7 @@ const createIcon = (obj = {}, type) => {
   const { id, lng, lat, status } = obj;
   const html = ` <div class="cstm-icon-panel" id="icon-${id}"}>
       <div class="cstm-icon-img">
-          <img src="/img/dwImg.png" style="width: 30;" />
+          <img src="./img/dwImg.png" style="width: 30;" />
       </div>
     </div>`;
   const marker = new AMap.Marker({

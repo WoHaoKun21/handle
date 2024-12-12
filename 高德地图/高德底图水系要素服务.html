@@ -22,17 +22,17 @@
     </script>
   </head>
   <body>
-    <div id="container" class="map" tabindex="0"></div>
+    <div id="container" class="map"></div>
   </body>
   <script>
     const click = document.getElementById("container");
     let fuyang, water;
-    fetch("/json/fuyang.json")
+    fetch("./json/fuyang.json")
       .then((res) => res.json())
       .then((res) => {
         fuyang = res;
       });
-    fetch("/json/water.json")
+    fetch("./json/water.json")
       .then((res) => res.json())
       .then((res) => {
         water = res;

@@ -1,4 +1,4 @@
-initMap = () => {
+const initMap = () => {
   const { businessMapProjectDTOS, provinceLocationAndProjectNumbers } =
     this.state.mapData;
   // 定义行政区域
@@ -109,4 +109,4 @@ getColorByDGP = (adcode) => {
   return colors[adcode];
 };
 
-initMap();
+// initMap();

@@ -3,10 +3,11 @@ let satelliteLayer; // 卫星图层变量
 
 // 加载外部乡镇数据
 const loadJeoJson = () => {
-  axios.get("./json/city.json").then((res) => {
-    if (res.status === 200) {
+  fetch("./json/city.json")
+    .then((r) => r.json())
+    .then((data) => {
       const geoJSON = new AMap.GeoJSON({
-        geoJSON: res.data,
+        geoJSON: data,
         // 还可以自定义getMarker和getPolyline
         getPolygon: ({ properties: { _parentProperities } }, lnglats) => {
           const text = new AMap.Text({
@@ -46,10 +47,7 @@ const loadJeoJson = () => {
           fillOpacity: 0.8,
         });
       });
-    } else {
-      console.error("GeoJSON 服务请求失败");
-    }
-  });
+    });
 };
 
 // 初始化地图

@@ -14,18 +14,21 @@
     const token =
       "eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjI4ZjA5M2Q4LTE0NjktNDQ3My04MTNkLTQ4OGIwNWQ5ZWI2YSJ9.FY2o08ZN-SwabyhevmYay0Nr59dfBrU_QgALaXsothtCkEhY8a73t3pkTgnUFiM4jxJT3EVfCswQezWkmDEjuw";
     console.log("token：", token);
-
     const save = document.getElementById("save");
     const unSave = document.getElementById("unSave");
     let str = "";
     // 加密操作
     save.onclick = function () {
       str = btoa(encodeURIComponent(token));
-      console.log("加密后的的数据：", str);
+      console.log("加密token：", str);
     };
     // 解密操作
     unSave.onclick = function () {
-      console.log("token：", decodeURIComponent(atob(str)) === token);
+      console.log(
+        "解密token：",
+        decodeURIComponent(atob(str)) === token,
+        decodeURIComponent(atob(str))
+      );
     };
   </script>
 </html>
