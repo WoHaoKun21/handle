@@ -53,7 +53,7 @@ const initCesiumMap = async () => {
   // viewer.scene.imageryLayers.removeAll(); // 去除其他图层
 
   // 展示指定城市地图
-  const data = await fetch("../json/pinghu.json").then((res) => res.json());
+  const data = await fetch("./json/pinghu.json").then((res) => res.json());
   addCityArea(data); // 展示城市范围
 };
 

@@ -115,7 +115,7 @@ const initCesiumMap = async () => {
   });
 
   // 加载地图边界数据
-  const geojson = await fetch("../json/pinghu.json").then((res) => res.json());
+  const geojson = await fetch("./json/pinghu.json").then((res) => res.json());
   clippingCity(geojson);
   // 为裁剪区域填充高度
   addCityAreaHeight(geojson, -1600);
@@ -125,8 +125,8 @@ const initCesiumMap = async () => {
       30.702987136907296
     ),
     billboard: {
-      image: "./img/water.jpg",
-      scale: 0.3,
+      image: "./img/dwImg.png",
+      scale: 1,
       color: Cesium.Color.YELLOW,
     },
   });
@@ -137,7 +137,7 @@ const initCesiumMap = async () => {
     ),
     label: {
       text: "Cesium",
-      pixelOffset: new Cesium.Cartesian2(0, -20),
+      pixelOffset: new Cesium.Cartesian2(0, -50),
       fillColor: Cesium.Color.YELLOWGREEN, // 颜色变量
       showBackground: true,
       backgroundColor: new Cesium.Color(255, 255, 0), // new 因为后面是个类 要实例化
