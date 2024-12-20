@@ -3,8 +3,137 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <title>relationGraph关系网</title>
+    <script src="./js/Vue2.js"></script>
+    <script src="./js/RelationGraph.js"></script>
+    <style>
+      * {
+        margin: 0px;
+        padding: 0px;
+      }
+      .container {
+        width: 100%;
+        height: 100vh;
+      }
+      .my-node-style {
+        background-position: center center;
+        background-size: 100%;
+        height: 100%;
+        width: 100%;
+        border-radius: 40px;
+        overflow: visible;
+      }
+      .c-node-name {
+        width: 80px;
+        text-align: center;
+        color: #2e74b5;
+        margin-top: 10px;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div class="container" id="app"></div>
+  </body>
+  <!-- <script src="./js/relationGraph关系网.js"></script> -->
+  <script>
+    const graphOptions = {
+      debug: false,
+      defaultNodeBorderWidth: 0,
+      defaultNodeColor: "rgba(238, 178, 94, 1)",
+      allowSwitchLineShape: true,
+      allowSwitchJunctionPoint: true,
+      defaultLineShape: 1,
+      layout: {
+        label: "自动布局",
+        layoutName: "force",
+        layoutClassName: "seeks-layout-force",
+      },
+      defaultJunctionPoint: "border",
+    };
+    const vm = new Vue({
+      el: "#app",
+      data: {
+        g_loading: true,
+        demoname: "---",
+        checked_sex: "",
+        checked_isgoodman: "",
+        rel_checkList: [
+          "师生",
+          "上下级",
+          "亲戚",
+          "情人",
+          "朋友",
+          "夫妻",
+          "勾结",
+          "腐化",
+          "举报",
+        ],
+        all_rel_type: [
+          "师生",
+          "上下级",
+          "亲戚",
+          "情人",
+          "朋友",
+          "夫妻",
+          "勾结",
+          "腐化",
+          "举报",
+        ],
+        graphOptions,
+      },
+      methods: {
+        async setGraphData() {
+          const demoData = await fetch("./json/relationGraph关系网.json").then(
+            (o) => o.json()
+          );
+          const __graph_json_data = demoData;
+          console.log("数据：", this.$refs);
+          this.$refs.graphRef.setJsonData(
+            __graph_json_data,
+            (graphInstance) => {
+              // 这些写上当图谱初始化完成后需要执行的代码
+            }
+          );
+        },
+        doFilter() {
+          const _all_nodes = this.$refs.graphRef.getInstance().getNodes();
+          const _all_links = this.$refs.graphRef.getInstance().getLinks();
+          _all_nodes.forEach((thisNode) => {
+            let _isHideThisLine = false;
+            if (this.checked_sex !== "") {
+              if (thisNode.data["sexType"] !== this.checked_sex) {
+                _isHideThisLine = true;
+              }
+            }
+            if (this.checked_isgoodman !== "") {
+              if (thisNode.data["isGoodMan"] !== this.checked_isgoodman) {
+                _isHideThisLine = true;
+              }
+            }
+            thisNode.opacity = _isHideThisLine ? 0.1 : 1;
+          });
+          _all_links.forEach((thisLink) => {
+            thisLink.relations.forEach((thisLine) => {
+              if (this.rel_checkList.indexOf(thisLine.data["type"]) === -1) {
+                if (!thisLine.isHide) {
+                  thisLine.isHide = true;
+                  console.log("Hide line:", thisLine);
+                }
+              } else {
+                if (thisLine.isHide) {
+                  thisLine.isHide = false;
+                  console.log("Show line:", thisLine);
+                }
+              }
+            });
+            // thisNode.opacity = _isShowThisNode ? 1 : 0.1
+          });
+          this.$refs.graphRef.getInstance().dataUpdated();
+        },
+      },
+      mounted() {
+        this.setGraphData();
+      },
+    });
+  </script>
 </html>
