@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      @keyframes move21 {
+        form {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 40px 0;
+        }
+      }
+      .yuanzhu,
+      .yuanzhu1 {
+        position: relative;
+        z-index: 999;
+        margin: 30px auto;
+        overflow: hidden;
+        background: linear-gradient(
+          left,
+          rgba(6, 221, 241, 0.2),
+          rgba(6, 142, 200, 0.2)
+        );
+        background: -webkit-linear-gradient(
+          left,
+          rgba(6, 221, 241, 0.2),
+          rgba(6, 221, 241, 0.2)
+        );
+        background: -ms-linear-gradient(
+          left,
+          rgba(6, 221, 241, 0.2),
+          rgba(6, 142, 200, 0.2)
+        );
+        background: -moz-linear-gradient(
+          left,
+          rgba(6, 221, 241, 0.2),
+          rgba(6, 142, 200, 0.2)
+        );
+      }
+      .yuanzhu {
+        height: 8px;
+        width: 200px;
+        border-top-right-radius: 10px;
+      }
+      .yuanzhu1 {
+        height: 8px;
+        width: 200px;
+        left: 96px;
+        top: 66px;
+        transform: rotate(90deg);
+      }
+      .jiantou {
+        width: 202px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent 50%, #95c1ff 0) repeat-x;
+        background-size: 20px 5px;
+        background-position: 0 0;
+        transform: translateY(-50%);
+        z-index: 9999;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        animation: move21 1s linear infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="yuanzhu">
+      <div class="jiantou"></div>
+    </div>
+    <div class="yuanzhu1">
+      <div class="jiantou"></div>
+    </div>
+  </body>
+</html>
