@@ -1,0 +1,126 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f001;
+}
+
+.cstmIconPanel {
+  position: relative;
+  /* 水库弹框和划入后弹框公共样式 */
+  .cstmIconName,
+  .cstmIconInfo {
+    position: absolute;
+    left: 50%;
+    padding: 10px 15px 10px 10px;
+    display: flex;
+    font-weight: bold;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 0px 21px 0px #e7e7e7;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  /* 默认水库弹框样式 */
+  .cstmIconName {
+    top: -95px;
+    align-items: center;
+    height: 70px;
+    color: #66c8ff;
+    > div {
+      margin-right: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 47px;
+      height: 47px;
+      border-radius: 12px;
+      background-color: #66c8ff;
+      > img {
+        width: 28px;
+      }
+    }
+    > p {
+      width: calc(100% - 67px);
+      /* 省略号 */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  /* 水库弹框划入后的样式 */
+  .cstmIconInfo {
+    top: -115px;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90px;
+    opacity: 0;
+    .reserName {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      div:nth-of-type(1) {
+        width: 80px;
+        /* 省略号 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      div:nth-of-type(2) {
+        margin-left: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        border-radius: 10px;
+        background: #67b1fa;
+        color: #fff;
+      }
+    }
+    .reserInfo {
+      padding-right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      > span {
+        color: #979cb9;
+      }
+    }
+  }
+  .cstmIconInfo::after,
+  .cstmIconName::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-width: 13px 10px 0 10px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+    transform: translateX(-50%);
+  }
+  .cstmIconImg {
+    position: relative;
+    z-index: 1;
+  }
+}
+.cstmIconPanel:hover {
+  .cstmIconName {
+    display: none;
+    opacity: 0;
+  }
+  .cstmIconInfo {
+    display: flex;
+    opacity: 1;
+  }
+}
