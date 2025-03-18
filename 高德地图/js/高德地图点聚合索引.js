@@ -1,18 +1,20 @@
-map = new AMap.Map("container", {
-  center: [116.397428, 39.90923],
-  zoom: 9,
-  animateEnable: true,
-  mapStyle: "amap://styles/grey",
-});
+let satelliteLayer; // 卫星
 const count = points.length;
-const clusterMarkers = () => {
-  const markerList = [];
-  const marker = new AMap.Marker({
-    map: map,
+
+const initMap = () => {
+  map = new AMap.Map("container", {
+    center: ["116.502159141883", "39.857389101662"],
+    zooms: [5, 18], // 缩放范围
+    animateEnable: true,
   });
-  markerList.push(marker);
-  return markerList;
+  // 构造卫星图层
+  satelliteLayer = new AMap.TileLayer.Satellite();
+  map.add(satelliteLayer); // 添加卫星图层
 };
+
+initMap();
+
+// 可聚合的属性及范围
 const clusterIndexSet = {
   city: {
     minZoom: 2,
@@ -31,6 +33,8 @@ const clusterIndexSet = {
     maxZoom: 22,
   },
 };
+
+// 聚合后的样式
 const getStyle = (context) => {
   const clusterData = context.clusterData; // 聚合中包含数据
   const index = context.index; // 聚合的条件
@@ -39,12 +43,12 @@ const getStyle = (context) => {
   const color = ["8,60,156", "66,130,198", "107,174,214", "78,200,211"];
   const indexs = ["city", "district", "area", "community"];
   const i = indexs.indexOf(index["mainKey"]);
-  const text = clusterData[0][index["mainKey"]];
-  const size = Math.round(30 + Math.pow(count / points.length, 1 / 5) * 70);
+  let text = clusterData[0][index["mainKey"]];
+  let size = Math.round(30 + Math.pow(count / points.length, 1 / 5) * 70);
   if (i <= 2) {
     const extra = '<span class="showCount">' + context.count + "套</span>";
-    // text = `<span class="showName">${text}</span>`;
-    // text += extra;
+    text = '<span class="showName">' + text + "</span>";
+    text += extra;
   } else {
     size = 12 * text.length + 20;
   }
@@ -60,7 +64,9 @@ const getStyle = (context) => {
   };
   return style;
 };
-const getPosition = (context) => {
+
+// 展开后标注的位置
+const getPosition = (context) => { 
   const key = context.index.mainKey;
   const dataItem = context.clusterData && context.clusterData[0];
   const districtName = dataItem[key];
@@ -71,30 +77,7 @@ const getPosition = (context) => {
   const centerLnglat = new AMap.LngLat(center[0], center[1]);
   return centerLnglat;
 };
-const _customRender = (data) => {
-  const keys = Object.keys(data.clusterData);
-  let markers = [];
-  for (const i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const cluster = data.clusterData[key];
-    const position = cluster.data[0].lnglat;
-    const marker = new AMap.LabelMarker({
-      position: position,
-      text: {
-        content: cluster.data.length.toString(),
-        style: {
-          fillColor: "#ffffff",
-        },
-      },
-    });
-    markers.push(marker);
-  }
-  return {
-    type: "type",
-    layer: null,
-    markers: markers,
-  };
-};
+
 // 自定义聚合点样式
 const _renderClusterMarker = (context) => {
   const clusterData = context.clusterData; // 聚合中包含数据
@@ -110,9 +93,8 @@ const _renderClusterMarker = (context) => {
   if (styleObj.index <= 2) {
     div.style.height = styleObj.size + "px";
     // 自定义点击事件
-    context.marker.on("click", (e) => {
-      console.log(e);
-      const curZoom = map.getZoom();
+    context.marker.on("click", function (e) {
+      let curZoom = map.getZoom();
       if (curZoom < 20) {
         curZoom += 1;
       }
