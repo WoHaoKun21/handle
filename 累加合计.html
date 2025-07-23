@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>累加合计</title>
+  </head>
+  <body></body>
+  <script>
+    const sumDays = (num) => {
+      let sum = 0;
+      let double = 1;
+      for (let i = 1; i <= num; i++) {
+        sum += double;
+        double = double * 2;
+      }
+      return sum;
+    };
+
+    const data = sumDays(31);
+    console.log("总数：", data);
+  </script>
+</html>
