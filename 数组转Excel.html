@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数组转Excel</title>
+    <!-- 引入xlsx包 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="./css/数组转Excel.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <div class="left">
+          <div class="title">
+            <span></span>表格头 <button id="addItem">添加列</button>
+            <button id="removeItem">删除最后一列</button>
+          </div>
+          <div class="leftData">
+            <form action="" id="form" method="get">
+              <div class="item">
+                <div>
+                  <label for="key">关键字</label>
+                  <input
+                    type="text"
+                    name="key"
+                    id="key"
+                    placeholder="亲输入关键字"
+                  />
+                </div>
+                <div>
+                  <label for="name">表头名字</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    placeholder="亲输入关键字对应的名字"
+                  />
+                </div>
+              </div>
+              <div class="item">
+                <div>
+                  <label for="key2">关键字</label>
+                  <input
+                    type="text"
+                    name="key2"
+                    id="key2"
+                    placeholder="亲输入关键字"
+                  />
+                </div>
+                <div>
+                  <label for="name2">表头名字</label>
+                  <input
+                    type="text"
+                    name="name2"
+                    id="name2"
+                    placeholder="亲输入关键字对应的名字"
+                  />
+                </div>
+              </div>
+              <button class="submit" type="submit">生成Excel</button>
+            </form>
+          </div>
+        </div>
+        <div class="right">
+          <div class="title"><span></span>预览页面</div>
+          <div class="rightData"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./json/数组转Excel.json"></script>
+  <script src="./js/数组转Excel.js"></script>
+</html>
