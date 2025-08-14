@@ -13,7 +13,8 @@
       <div class="content">
         <div class="left">
           <div class="title">
-            <span></span>表格头 <button id="addItem">添加列</button>
+            <span></span>表格头
+            <button id="addItem">添加列</button>
             <button id="removeItem">删除最后一列</button>
           </div>
           <div class="leftData">
@@ -25,7 +26,7 @@
                     type="text"
                     name="key"
                     id="key"
-                    placeholder="亲输入关键字"
+                    placeholder="请输入关键字"
                   />
                 </div>
                 <div>
@@ -34,7 +35,7 @@
                     type="text"
                     name="name"
                     id="name"
-                    placeholder="亲输入关键字对应的名字"
+                    placeholder="请输入关键字对应的名字"
                   />
                 </div>
               </div>
@@ -45,7 +46,7 @@
                     type="text"
                     name="key2"
                     id="key2"
-                    placeholder="亲输入关键字"
+                    placeholder="请输入关键字"
                   />
                 </div>
                 <div>
@@ -54,18 +55,67 @@
                     type="text"
                     name="name2"
                     id="name2"
-                    placeholder="亲输入关键字对应的名字"
+                    placeholder="请输入关键字对应的名字"
                   />
                 </div>
               </div>
-              <button class="submit" type="submit">生成Excel</button>
+              <button class="update" type="submit">更新预览页面</button>
             </form>
           </div>
         </div>
         <div class="right">
-          <div class="title"><span></span>预览页面</div>
-          <div class="rightData"></div>
+          <div class="title">
+            <span></span>预览页面
+            <input id="file" type="file" />
+          </div>
+          <div class="rightData">
+            <table>
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>表头1</th>
+                  <th>表头2</th>
+                  <th>表头3</th>
+                  <th>表头4</th>
+                  <th>表头5</th>
+                  <th>表头6</th>
+                  <th>表头7</th>
+                  <th>表头8</th>
+                  <th>表头9</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>表格1</td>
+                  <td>表格2</td>
+                  <td>表格3</td>
+                  <td>表格4</td>
+                  <td>表格5</td>
+                  <td>表格6</td>
+                  <td>表格7</td>
+                  <td>表格8</td>
+                  <td>表格9</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>表格1</td>
+                  <td>表格2</td>
+                  <td>表格3</td>
+                  <td>表格4</td>
+                  <td>表格5</td>
+                  <td>表格6</td>
+                  <td>表格7</td>
+                  <td>表格8</td>
+                  <td>表格9</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+      <div class="submit">
+        <button id="submit">生成Excel</button>
       </div>
     </div>
   </body>

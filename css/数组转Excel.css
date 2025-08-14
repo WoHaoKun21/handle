@@ -3,6 +3,8 @@
   padding: 0px;
   list-style: none;
 }
+
+/* 滚动条样式 */
 ::-webkit-scrollbar {
   /* 滚动条宽度 */
   width: 5px;
@@ -18,6 +20,7 @@
   background: #0000;
 }
 
+/* 按钮样式 */
 button {
   margin-left: 8px;
   padding: 4px 15px;
@@ -49,6 +52,7 @@ button.active.focus {
   outline: none;
 }
 
+/* 输入框样式 */
 input {
   margin-left: 5px;
   height: 32px;
@@ -69,12 +73,17 @@ input:active.focus,
 input.active.focus {
   outline: none;
 }
+input[type="file"] {
+  border: none;
+}
 
+/* 容器样式 */
 .container {
   width: 100%;
   height: 100%;
 }
 
+/* 标题样式 */
 .title {
   padding-left: 5px;
   display: flex;
@@ -90,11 +99,11 @@ input.active.focus {
   background-color: #6e90ff;
 }
 
+/* 内容区域 */
 .content {
   position: relative;
   display: flex;
   height: 600px;
-  border: 1px solid #f00;
 }
 .content > .left {
   width: 30%;
@@ -108,34 +117,75 @@ input.active.focus {
 .content > .left > .leftData,
 .content > .right > .rightData {
   padding: 14px 0px;
+  width: 100%;
   height: calc(100% - 34px);
-  border: 1px solid #09f;
   box-sizing: border-box;
-  overflow-y: auto;
 }
 
+/*                                                表格头                                         */
+/* 左侧表格头字段样式 */
 .leftData {
+  overflow-y: auto;
   background-color: #f002;
 }
 
-.submit {
+/* 生成Excel按钮样式 */
+.update {
   position: absolute;
   z-index: 100;
   left: 10px;
   bottom: -45px;
 }
 
+/* 更新预览页面 */
+.submit {
+  padding-left: 150px;
+  padding-top: 13px;
+}
+
+/* 表单样式 */
 .leftData > #form > .item {
   display: flex;
   align-items: center;
   height: 32px;
   margin-bottom: 14px;
 }
-
 #form > .item > div {
   display: flex;
   align-items: center;
   padding-left: 10px;
   width: 50%;
   font-size: 14px;
+}
+
+/*                                                预览页面                                         */
+/* 内容部分样式 */
+.rightData {
+  /* width: 566px; */
+  border: 1px solid #f00;
+  background-color: #fff;
+  overflow-x: scroll;
+}
+
+.rightData > table {
+  border-spacing: 0;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+/* 表头样式 */
+thead > tr {
+  background-color: #f2f2f2;
+}
+thead > tr > th {
+  padding: 0px 15px;
+  width: 70px;
+  border: 1px solid #ddd;
+}
+
+/* 表格内容样式 */
+tbody > tr > td {
+  padding: 0px 15px;
+  width: 70px;
+  border: 1px solid #ddd;
 }
