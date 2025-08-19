@@ -102,12 +102,14 @@ input[type="file"] {
 /* 内容区域 */
 .content {
   position: relative;
+  padding-top: 20px;
   display: flex;
   height: 600px;
 }
 .content > .left {
   width: 30%;
   height: 100%;
+  background-color: #f002;
 }
 .content > .right {
   width: 70%;
@@ -125,8 +127,9 @@ input[type="file"] {
 /*                                                表格头                                         */
 /* 左侧表格头字段样式 */
 .leftData {
+  background-color: #fff;
   overflow-y: auto;
-  background-color: #f002;
+  border: 1px solid #09f;
 }
 
 /* 生成Excel按钮样式 */
@@ -150,17 +153,26 @@ input[type="file"] {
   height: 32px;
   margin-bottom: 14px;
 }
+
 #form > .item > div {
   display: flex;
   align-items: center;
   padding-left: 10px;
-  width: 50%;
+  width: 52%;
   font-size: 14px;
+}
+.item > div:last-child input {
+  width: 230px;
+}
+
+#form > .item > div:first-of-type {
+  width: 43%;
 }
 
 /*                                                预览页面                                         */
 /* 内容部分样式 */
 .rightData {
+  padding: 10px;
   /* width: 566px; */
   border: 1px solid #f00;
   background-color: #fff;
