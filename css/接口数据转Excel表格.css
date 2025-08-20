@@ -99,10 +99,21 @@ input[type="file"] {
   background-color: #6e90ff;
 }
 
+.container > .topTip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.topTip span {
+  color: #f00;
+}
+
 /* 内容区域 */
 .content {
   position: relative;
-  padding-top: 20px;
+  /* padding-top: 20px; */
   display: flex;
   height: 600px;
 }
