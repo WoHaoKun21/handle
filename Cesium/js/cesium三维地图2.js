@@ -1,4 +1,5 @@
-// Cesium.Ion.defaultAccessToken='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NTQ1NzViMS01ZDE0LTQzZDQtOGJkYi0xNjE0OThkNjNlM2IiLCJpZCI6MTczMzMwLCJpYXQiOjE3MzMzMDI2NDl9.u5aqxhYFmwy_ntbdrY0f7Q172iKOwY0t3-av-FZNlbM';
+Cesium.Ion.defaultAccessToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjOGJkN2EwZi1jZjI3LTQwYjktOTcyOS1lODU4NGU5OTJkNWQiLCJpZCI6MzQ0NzkxLCJpYXQiOjE3NTg4NzI1MTN9.Zy06GuCyMTlq58VMV6lafX5cdBp0W_aicKD-30XnIAM";
 const cesiumDom = document.getElementById("cesiumDom");
 let viewer; // cesium3D地图实例
 
