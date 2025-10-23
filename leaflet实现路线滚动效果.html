@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天地图水流流动效果</title>
+    <link rel="stylesheet" href="./leaflets/leaflet.css" />
+    <script src="./leaflets/leaflet.js"></script>
+    <script src="./leaflets/leaflet-path.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Microsoft YaHei", sans-serif;
+      }
+      #map {
+        width: 100%;
+        height: 100vh;
+      }
+      .control-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        min-width: 200px;
+      }
+      .btn-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 6px;
+        background: #1890ff;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      button:hover {
+        background: #40a9ff;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div class="control-panel">
+      <h3>水流控制面板</h3>
+      <div class="btn-group">
+        <button id="startFlow">开始流动</button>
+        <button id="stopFlow">停止流动</button>
+        <button id="changeColor">切换颜色</button>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    // 初始化天地图
+    const map = L.map("map", {
+      center: [29.516916, 106.522858],
+      zoom: 16,
+      crs: L.CRS.EPSG3857,
+    });
+
+    // 添加天地图图层
+    const tiandituLayer = L.tileLayer(
+      "http://t0.tianditu.gov.cn/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=e0f2f9897bc755f61438b03804066a32",
+      {
+        noWrap: true,
+        bounds: [
+          [-90, -180],
+          [90, 180],
+        ],
+      }
+    ).addTo(map);
+
+    // 模拟水流路径数据（长江重庆段）
+    const riverPath = [
+      [29.516916, 106.522858],
+      [29.5175, 106.5232],
+      [29.5181, 106.5238],
+      [29.5188, 106.5245],
+      [29.5195, 106.5252],
+      [29.5202, 106.526],
+      [29.521, 106.5268],
+      [29.5218, 106.5276],
+      [29.5226, 106.5284],
+    ];
+
+    // 创建流动路径
+    let antPath = L.polyline
+      .antPath(riverPath, {
+        color: "#1890ff",
+        weight: 6,
+        opacity: 0.8,
+        delay: 1000,
+        dashArray: [20, 30],
+        pulseColor: "#69c0ff",
+        paused: false,
+      })
+      .addTo(map);
+
+    // 控制函数
+    document.getElementById("startFlow").addEventListener("click", () => {
+      antPath.resume();
+    });
+
+    document.getElementById("stopFlow").addEventListener("click", () => {
+      antPath.pause();
+    });
+
+    document.getElementById("changeColor").addEventListener("click", () => {
+      const colors = ["#1890ff", "#52c41a", "#faad14", "#f5222d"];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      antPath.setStyle({ color: randomColor, pulseColor: randomColor + "80" });
+    });
+  </script>
+</html>
