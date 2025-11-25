@@ -6,7 +6,7 @@
     <title>shp引用XML地图文件</title>
     <link rel="stylesheet" href="./leaflets/leaflet.css" />
     <script src="./leaflets/leaflet.js"></script>
-    <script src="./js/shp.min.js"></script>
+    <script src="./js/shpFile.js"></script>
     <style>
       * {
         padding: 0;
@@ -64,18 +64,28 @@
       }
     ).addTo(map);
 
-    // map.addLayer(overlaysImg);
-    shp("./docs/myshape.zip")
-      .then((geojson) => {
-        console.log("GeoJSON 加载成功:", geojson);
-        const layer = L.geoJSON(geojson, {
-          style: { color: "red", weight: 1 },
-        }).addTo(map);
-        map.fitBounds(layer.getBounds());
+    // https://106.12.220.248:39562/down/kLLqeP92qTsX.dbf
+    // https://106.12.220.248:39562/down/M0MU29Gg8oP2.prj
+    // https://106.12.220.248:39562/down/sBVc2W63JVT3.sbn
+    // https://106.12.220.248:39562/down/bsysor85wLUI.sbx
+    // https://106.12.220.248:39562/down/Zb5hVbUncx9R.shp
+    // https://106.12.220.248:39562/down/QJDLNQhIrKFV.xml
+    // https://106.12.220.248:39562/down/CMl3ovyuYXSI.shx
+
+    shapefile
+      .open("https://106.12.220.248:39562/down/Zb5hVbUncx9R.shp")
+      .then((source) => {
+        source.read().then(function log(result) {
+          if (result.done) return;
+          console.log("数据：", result.value);
+
+          // const layer = L.geoJSON(result.value, {
+          //   style: { color: "red", weight: 1 },
+          // }).addTo(map);
+          // map.fitBounds(layer.getBounds());
+          // return source.read().then(log);
+        });
       })
-      .catch((err) => {
-        console.error("加载 shapefile 出错:", err);
-        alert("加载 shapefile 出错，请查看控制台");
-      });
+      .catch((error) => console.error(error.stack));
   </script>
 </html>
