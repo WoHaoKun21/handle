@@ -35,8 +35,8 @@
   <script>
     // 初始化天地图
     const map = L.map("map", {
-      center: [29.516916, 106.522858],
-      zoom: 16,
+      center: [38.548165423046584, 106.15264892578126],
+      zoom: 10,
       crs: L.CRS.EPSG4326,
     });
 
@@ -71,7 +71,7 @@
         const layer = L.geoJSON(geojson, {
           style: { color: "red", weight: 1 },
         }).addTo(map);
-        map.fitBounds(layer.getBounds());
+        // map.fitBounds(layer.getBounds());
       })
       .catch((err) => {
         console.error("加载 shapefile 出错:", err);
