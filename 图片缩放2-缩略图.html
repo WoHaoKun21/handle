@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片缩放 + 鹰眼缩略图导航</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #f0f2f5;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        padding: 16px;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 1000px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+      }
+
+      /* 工具栏 */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid #eef2f6;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .toolbar .info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+        color: #1e293b;
+      }
+
+      .scale-badge {
+        background: #eef2f6;
+        padding: 4px 14px;
+        border-radius: 30px;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .btn-reset {
+        background: #3b82f6;
+        border: none;
+        color: white;
+        padding: 8px 22px;
+        border-radius: 40px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+      }
+      .btn-reset:hover {
+        background: #2563eb;
+      }
+
+      /* 主图容器 — 相对定位，用于放置鹰眼 */
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 560px;
+        overflow: hidden;
+        background: #e9edf2;
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+      }
+      .image-wrapper:active {
+        cursor: grabbing;
+      }
+
+      .zoomable-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        will-change: transform;
+        backface-visibility: hidden;
+        transform: translate(0px, 0px) scale(1);
+        transform-origin: center center;
+      }
+
+      /* ---------- 鹰眼缩略图 (右下角) ---------- */
+      .eagle-eye {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 160px;
+        height: 120px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        cursor: crosshair;
+        backdrop-filter: blur(2px);
+        transition: opacity 0.2s;
+        opacity: 0;
+        pointer-events: none; /* 默认不可交互，缩放>1.05时显示 */
+      }
+
+      .eagle-eye.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .eagle-eye img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* 缩略图内部的小图片完全显示，不做变换 */
+      }
+
+      /* 缩略图上的矩形框 (表示当前主视图可视区域) */
+      .eagle-viewport {
+        position: absolute;
+        border: 2px solid #ffd966;
+        background: rgba(255, 215, 0, 0.15);
+        pointer-events: none;
+        box-shadow: inset 0 0 4px rgba(255, 215, 0, 0.3);
+        transition: all 0.05s linear;
+        display: none; /* 默认隐藏，缩放>1时显示 */
+      }
+
+      .eagle-viewport.show {
+        display: block;
+      }
+
+      /* 底部提示 */
+      .hint {
+        padding: 12px 24px;
+        background: #f8fafc;
+        border-top: 1px solid #eef2f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #475569;
+        font-size: 13px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .hint kbd {
+        background: #e2e8f0;
+        padding: 2px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-family: inherit;
+        color: #0f172a;
+      }
+      .hint .drag-tip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      @media (max-width: 640px) {
+        .image-wrapper {
+          height: 380px;
+        }
+        .eagle-eye {
+          width: 120px;
+          height: 90px;
+          bottom: 12px;
+          right: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <!-- 工具栏 -->
+      <div class="toolbar">
+        <div class="info">
+          <span>🔍 缩放</span>
+          <span class="scale-badge" id="scaleDisplay">100%</span>
+        </div>
+        <button class="btn-reset" id="resetBtn">⟲ 重置</button>
+      </div>
+
+      <!-- 主图区域 -->
+      <div class="image-wrapper" id="imageWrapper">
+        <img
+          class="zoomable-image"
+          id="zoomImage"
+          src="https://picsum.photos/seed/eagle/1000/700"
+          alt="可缩放图片"
+          draggable="false"
+        />
+
+        <!-- 鹰眼缩略图 -->
+        <div class="eagle-eye" id="eagleEye">
+          <img
+            id="eagleImg"
+            src="https://picsum.photos/seed/eagle/1000/700"
+            alt="缩略图"
+            draggable="false"
+          />
+          <div class="eagle-viewport" id="eagleViewport"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        // ----- DOM 引用 -----
+        const wrapper = document.getElementById("imageWrapper");
+        const img = document.getElementById("zoomImage");
+        const scaleDisplay = document.getElementById("scaleDisplay");
+        const resetBtn = document.getElementById("resetBtn");
+
+        const eagleEye = document.getElementById("eagleEye");
+        const eagleImg = document.getElementById("eagleImg");
+        const eagleViewport = document.getElementById("eagleViewport");
+
+        // ----- 状态 -----
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+
+        let isDragging = false;
+        let startX = 0,
+          startY = 0;
+        let startTranslateX = 0,
+          startTranslateY = 0;
+
+        const MIN_SCALE = 0.5;
+        const MAX_SCALE = 5.0;
+
+        // 鹰眼显示阈值
+        const EAGLE_THRESHOLD = 1.05;
+
+        // ----- 辅助: 更新主图变换 & 鹰眼 -----
+        function updateTransform() {
+          img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+          const percent = Math.round(scale * 100);
+          scaleDisplay.textContent = percent + "%";
+
+          // 更新鹰眼可见性 & 视口框
+          updateEagleEye();
+        }
+
+        // ----- 边界限制 -----
+        function clampTranslation() {
+          if (!img) return;
+          const rect = img.getBoundingClientRect();
+          const renderW = rect.width;
+          const renderH = rect.height;
+          const containerW = wrapper.clientWidth;
+          const containerH = wrapper.clientHeight;
+
+          const marginX = Math.max(renderW * 0.15, 40);
+          const marginY = Math.max(renderH * 0.15, 40);
+
+          const maxTranslateX = Math.max(renderW - containerW, 0) / 2 + marginX;
+          const maxTranslateY = Math.max(renderH - containerH, 0) / 2 + marginY;
+
+          if (renderW > containerW || renderH > containerH) {
+            translateX = Math.min(
+              Math.max(translateX, -maxTranslateX),
+              maxTranslateX,
+            );
+            translateY = Math.min(
+              Math.max(translateY, -maxTranslateY),
+              maxTranslateY,
+            );
+          } else {
+            translateX = 0;
+            translateY = 0;
+          }
+        }
+
+        // ----- 核心: 以鼠标为中心缩放 -----
+        function zoomAtMouse(clientX, clientY, delta) {
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const imgRect = img.getBoundingClientRect();
+
+          const mouseX = (clientX - wrapperRect.left) / wrapperRect.width;
+          const mouseY = (clientY - wrapperRect.top) / wrapperRect.height;
+
+          const step = 0.08;
+          let newScale = scale + (delta > 0 ? step : -step);
+          newScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+          if (newScale === scale) return;
+
+          const ratio = newScale / scale;
+          const currentW = imgRect.width;
+          const currentH = imgRect.height;
+
+          const offsetX = (mouseX - 0.5) * currentW;
+          const offsetY = (mouseY - 0.5) * currentH;
+
+          let newTx = translateX - offsetX * (ratio - 1);
+          let newTy = translateY - offsetY * (ratio - 1);
+
+          scale = newScale;
+          translateX = newTx;
+          translateY = newTy;
+
+          clampTranslation();
+          updateTransform();
+        }
+
+        // ----- 重置 -----
+        function resetView() {
+          scale = 1;
+          translateX = 0;
+          translateY = 0;
+          updateTransform();
+        }
+
+        // ----- 鹰眼更新 (计算视口框) -----
+        function updateEagleEye() {
+          // 控制鹰眼容器显隐
+          if (scale > EAGLE_THRESHOLD) {
+            eagleEye.classList.add("active");
+          } else {
+            eagleEye.classList.remove("active");
+            eagleViewport.classList.remove("show");
+            return;
+          }
+
+          // 获取主图和容器的尺寸
+          const mainRect = img.getBoundingClientRect();
+          const containerRect = wrapper.getBoundingClientRect();
+
+          // 主图当前实际渲染尺寸 (object-fit: contain 后的尺寸)
+          const renderW = mainRect.width;
+          const renderH = mainRect.height;
+
+          // 容器尺寸
+          const cw = containerRect.width;
+          const ch = containerRect.height;
+
+          // 缩略图容器尺寸
+          const eagleRect = eagleEye.getBoundingClientRect();
+          const ew = eagleRect.width;
+          const eh = eagleRect.height;
+
+          // 缩略图内部图片自然尺寸 (与主图一致)
+          const naturalW = img.naturalWidth || 1000;
+          const naturalH = img.naturalHeight || 700;
+
+          // 计算缩略图中图片的显示尺寸 (object-fit: contain)
+          const eagleImgRect = eagleImg.getBoundingClientRect();
+          const eagleRenderW = eagleImgRect.width;
+          const eagleRenderH = eagleImgRect.height;
+
+          // 主图可视区域在图片坐标系中的范围 (归一化 0~1)
+          // 主图变换: 先平移后缩放，原点在中心
+          // 可视区域左上角 (相对于图片中心)
+          const left = -translateX / (renderW * scale) + 0.5;
+          const top = -translateY / (renderH * scale) + 0.5;
+          const right = left - cw / (renderW * scale);
+          const bottom = top - ch / (renderH * scale);
+
+          // 修正: 因为图片可能比容器小，导致可视区域超出图片范围
+          // 但 clampTranslation 已经限制，所以不会超出太多
+          // 缩略图上的矩形框 (使用缩略图图片的显示坐标)
+          // 缩略图图片的显示区域 (相对于 eagleEye 容器)
+          const eagleImgOffsetX = (ew - eagleRenderW) / 2;
+          const eagleImgOffsetY = (eh - eagleRenderH) / 2;
+
+          // 将主图可视区域映射到缩略图图片上
+          // 注意: 主图坐标系: 0~1 对应图片完整区域，且 (0,0) 为左上角
+          // 缩略图坐标: (0,0) 为缩略图容器左上角
+          const vx = eagleImgOffsetX + left * eagleRenderW;
+          const vy = eagleImgOffsetY + top * eagleRenderH;
+          const vw = (right - left) * eagleRenderW;
+          const vh = (bottom - top) * eagleRenderH;
+
+          // 防止矩形显示负值或超出
+          if (vw > 0 && vh > 0 && isFinite(vx) && isFinite(vy)) {
+            eagleViewport.style.left = Math.max(0, vx) + "px";
+            eagleViewport.style.top = Math.max(0, vy) + "px";
+            eagleViewport.style.width = Math.min(ew - vx, Math.abs(vw)) + "px";
+            eagleViewport.style.height = Math.min(eh - vy, Math.abs(vh)) + "px";
+            eagleViewport.classList.add("show");
+          } else {
+            eagleViewport.classList.remove("show");
+          }
+        }
+
+        // ----- 点击缩略图定位 -----
+        function onEagleClick(e) {
+          if (scale <= EAGLE_THRESHOLD) return;
+
+          const eagleRect = eagleEye.getBoundingClientRect();
+          const imgRect = eagleImg.getBoundingClientRect();
+
+          // 点击在缩略图图片上的相对位置 (0~1)
+          const clickX = (e.clientX - imgRect.left) / imgRect.width;
+          const clickY = (e.clientY - imgRect.top) / imgRect.height;
+
+          // 限制在 [0,1] 范围内
+          const px = Math.min(Math.max(clickX, 0), 1);
+          const py = Math.min(Math.max(clickY, 0), 1);
+
+          // 将点击位置映射到主图坐标: 希望该点移动到主图可视区域中心
+          // 主图可视区域中心对应图片坐标 (0.5, 0.5)
+          // 需要计算新的 translate 使得图片的 (px, py) 点移动到容器中心
+          const mainRect = img.getBoundingClientRect();
+          const renderW = mainRect.width;
+          const renderH = mainRect.height;
+
+          // 目标: 图片上的 (px, py) 对应容器中心
+          // 公式: translate = (0.5 - px) * renderW * scale, 注意坐标系方向
+          // 因为 translate 是相对于图片中心 (0.5,0.5) 的偏移
+          const newTx = (0.5 - px) * renderW * scale;
+          const newTy = (0.5 - py) * renderH * scale;
+
+          translateX = newTx;
+          translateY = newTy;
+
+          clampTranslation();
+          updateTransform();
+        }
+
+        // ----- 事件: 滚轮 -----
+        function onWheel(e) {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? 1 : -1;
+          zoomAtMouse(e.clientX, e.clientY, delta);
+        }
+
+        // ----- 事件: 拖拽 -----
+        function onMouseDown(e) {
+          if (e.button !== 0) return;
+          // 如果缩放<=1，不允许拖拽 (但可以允许，边界限制会使其居中)
+          if (scale <= 1.0) {
+            // 仍然允许拖拽，但效果不明显，我们限制只允许scale>1
+            // 但为了体验，如果scale<=1，我们直接返回，不开启拖拽
+            // 但用户可能想拖拽看边缘，但实际无法拖动，所以这里我们允许，但边界会限制
+            // 为了更符合直觉，我们允许，但边界限制会使其回弹，我们直接禁用拖拽
+            // 但也可以让用户拖拽，但边界限制会让它居中，所以这里决定：scale<=1时不开启拖拽
+            return;
+          }
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startTranslateX = translateX;
+          startTranslateY = translateY;
+          wrapper.style.cursor = "grabbing";
+          e.preventDefault();
+        }
+
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          e.preventDefault();
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          translateX = startTranslateX + dx;
+          translateY = startTranslateY + dy;
+          clampTranslation();
+          updateTransform();
+        }
+
+        function onMouseUp(e) {
+          if (isDragging) {
+            isDragging = false;
+            wrapper.style.cursor = "grab";
+            e.preventDefault();
+          }
+        }
+
+        function onMouseLeave(e) {
+          if (isDragging) {
+            isDragging = false;
+            wrapper.style.cursor = "grab";
+          }
+        }
+
+        // ----- 窗口resize -----
+        function onResize() {
+          clampTranslation();
+          updateTransform();
+        }
+
+        // ----- 图片加载完成后更新 -----
+        function onImageLoad() {
+          // 确保鹰眼图片与主图一致
+          eagleImg.src = img.src;
+          clampTranslation();
+          updateTransform();
+        }
+
+        // ----- 初始化 -----
+        function init() {
+          // 主图事件
+          wrapper.addEventListener("wheel", onWheel, { passive: false });
+          wrapper.addEventListener("mousedown", onMouseDown);
+          window.addEventListener("mousemove", onMouseMove);
+          window.addEventListener("mouseup", onMouseUp);
+          wrapper.addEventListener("mouseleave", onMouseLeave);
+
+          resetBtn.addEventListener("click", resetView);
+          window.addEventListener("resize", onResize);
+
+          // 鹰眼点击
+          eagleEye.addEventListener("click", onEagleClick);
+
+          // 图片加载
+          img.addEventListener("load", onImageLoad);
+          if (img.complete) {
+            onImageLoad();
+          } else {
+            // 如果还没加载，先设置一个初始
+            setTimeout(() => {
+              clampTranslation();
+              updateTransform();
+            }, 100);
+          }
+
+          // 初始更新
+          updateTransform();
+
+          // 额外: 当图片加载完成，eagleImg 与主图同步
+          // 但 eagleImg 的 src 在 onImageLoad 中设置
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>
