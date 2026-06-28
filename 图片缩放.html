@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>以鼠标为中心缩放图片 · HTML/CSS/JS</title>
+    <style>
+      /* 全局重置 & 布局 */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #f5f7fa;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* 图片容器 — 滚动缩放 + 拖拽 */
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background: #e9edf2;
+        cursor: grab;
+        user-select: none;
+        touch-action: none; /* 防止触控时滚动页面 */
+      }
+
+      .image-wrapper:active {
+        cursor: grabbing;
+      }
+
+      /* 图片本身 — 使用 transform 实现缩放+平移 */
+      .zoomable-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none; /* 让鼠标事件穿透给容器 */
+        will-change: transform;
+        backface-visibility: hidden;
+        /* 初始状态：居中，无偏移 */
+        transform: translate(0px, 0px) scale(1);
+        transform-origin: center center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <!-- 图片容器 -->
+      <div class="image-wrapper" id="imageWrapper">
+        <img
+          class="zoomable-image"
+          id="zoomImage"
+          src="https://picsum.photos/seed/zoom/900/600"
+        />
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        // ----- DOM 引用 -----
+        const wrapper = document.getElementById("imageWrapper");
+        const img = document.getElementById("zoomImage");
+        const scaleDisplay = document.getElementById("scaleDisplay");
+        const resetBtn = document.getElementById("resetBtn");
+
+        // ----- 状态 -----
+        let scale = 1; // 当前缩放倍数 (0.5 ~ 5)
+        let translateX = 0; // 当前平移 (px)
+        let translateY = 0;
+
+        // 拖拽状态
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let startTranslateX = 0;
+        let startTranslateY = 0;
+
+        // 限制范围 (防止图片完全移出视野)
+        const MIN_SCALE = 0.5;
+        const MAX_SCALE = 5.0;
+
+        // 用于计算缩放中心 (缓存容器尺寸)
+        let wrapperRect = null;
+
+        // ----- 辅助: 更新 transform & 显示 -----
+        function updateTransform() {
+          // 应用平移 + 缩放 (顺序: 先平移再缩放)
+          img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+          // 更新显示百分比
+          const percent = Math.round(scale * 100);
+          scaleDisplay.textContent = percent + "%";
+        }
+
+        // ----- 边界限制 (防止图片拖出太远) -----
+        function clampTranslation() {
+          if (!img) return;
+          // 获取图片原始尺寸 (naturalWidth/Height 是图片真实尺寸)
+          const naturalW = img.naturalWidth || 800; // fallback
+          const naturalH = img.naturalHeight || 600;
+          // 容器尺寸
+          const containerW = wrapper.clientWidth;
+          const containerH = wrapper.clientHeight;
+
+          // 图片在缩放后的显示尺寸 (object-fit: contain 下实际渲染尺寸)
+          // 但为了更精确限制，我们使用图片自然尺寸 * scale 并考虑 contain 的缩放比例
+          // 更稳健: 使用 getBoundingClientRect 获取实际渲染尺寸
+          const rect = img.getBoundingClientRect();
+          const renderW = rect.width;
+          const renderH = rect.height;
+
+          // 允许的平移范围: 图片边缘最多露出 30% 或 50px，视觉舒适
+          const marginX = Math.max(renderW * 0.15, 40);
+          const marginY = Math.max(renderH * 0.15, 40);
+
+          // 但实际我们只要防止图片完全移出容器即可，范围基于渲染尺寸和容器尺寸
+          // 由于 transform 原点在中心，translate 范围 = ± (renderW/2 - 容器宽/2) 等
+          // 但因为 object-fit: contain 缩放，我们计算实际渲染尺寸与容器尺寸差值
+          const maxTranslateX = Math.max(renderW - containerW, 0) / 2 + marginX;
+          const maxTranslateY = Math.max(renderH - containerH, 0) / 2 + marginY;
+
+          // 应用限制
+          if (renderW > containerW || renderH > containerH) {
+            translateX = Math.min(
+              Math.max(translateX, -maxTranslateX),
+              maxTranslateX,
+            );
+            translateY = Math.min(
+              Math.max(translateY, -maxTranslateY),
+              maxTranslateY,
+            );
+          } else {
+            // 图片小于容器时，强制居中 (避免偏移)
+            translateX = 0;
+            translateY = 0;
+          }
+        }
+
+        // ----- 核心: 以鼠标位置为中心缩放 -----
+        function zoomAtMouse(clientX, clientY, delta) {
+          // 获取容器和图片的尺寸信息
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const imgRect = img.getBoundingClientRect();
+
+          // 鼠标在容器内的相对位置 (0~1)
+          const mouseX = (clientX - wrapperRect.left) / wrapperRect.width;
+          const mouseY = (clientY - wrapperRect.top) / wrapperRect.height;
+
+          // 计算新的缩放值 (步长 0.08)
+          const step = 0.08;
+          let newScale = scale + (delta > 0 ? step : -step);
+          newScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+
+          if (newScale === scale) return; // 无变化
+
+          // 缩放比例
+          const ratio = newScale / scale;
+
+          // 获取当前图片渲染尺寸 (用于计算偏移)
+          const currentW = imgRect.width;
+          const currentH = imgRect.height;
+
+          // 计算在缩放前后，鼠标指向的图片点保持不变
+          // 原理: 图片的 transform 原点在中心，我们需要调整 translate 使得鼠标位置对应的图片点固定
+          // 公式: newTranslate = oldTranslate - (鼠标相对中心偏移) * (尺寸变化)
+          // 鼠标相对中心的偏移: (mouseX - 0.5) * 当前尺寸
+          const offsetX = (mouseX - 0.5) * currentW;
+          const offsetY = (mouseY - 0.5) * currentH;
+          // 尺寸变化量
+          const deltaW = currentW * (ratio - 1);
+          const deltaH = currentH * (ratio - 1);
+
+          let newTx = translateX - offsetX * (ratio - 1);
+          let newTy = translateY - offsetY * (ratio - 1);
+
+          // 更新状态
+          scale = newScale;
+          translateX = newTx;
+          translateY = newTy;
+
+          // 边界限制
+          clampTranslation();
+
+          // 应用变换
+          updateTransform();
+        }
+
+        // ----- 重置视图 -----
+        function resetView() {
+          scale = 1;
+          translateX = 0;
+          translateY = 0;
+          updateTransform();
+        }
+
+        // ----- 事件: 滚轮缩放 (以鼠标为中心) -----
+        function onWheel(e) {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? 1 : -1; // 向下滚为放大
+          zoomAtMouse(e.clientX, e.clientY, delta);
+        }
+
+        // ----- 事件: 拖拽平移 (只在缩放 > 1 时启用) -----
+        function onMouseDown(e) {
+          // 只允许左键拖拽
+          if (e.button !== 0) return;
+          // 如果缩放为1或更小，不允许拖拽 (此时图片完全显示，无需拖动)
+          if (scale <= 1.0) {
+            // 但我们可以允许拖拽，但效果不明显，为了体验，限制scale>1才拖拽
+            // 但为了更自然，还是允许，但边界限制会使其居中，所以拖不动
+            // 这里我们强制如果scale<=1，就不开启拖拽
+            if (scale <= 1.0) return;
+          }
+
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startTranslateX = translateX;
+          startTranslateY = translateY;
+
+          wrapper.style.cursor = "grabbing";
+          e.preventDefault();
+        }
+
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          e.preventDefault();
+
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
+          translateX = startTranslateX + dx;
+          translateY = startTranslateY + dy;
+
+          clampTranslation();
+          updateTransform();
+        }
+
+        function onMouseUp(e) {
+          if (isDragging) {
+            isDragging = false;
+            wrapper.style.cursor = "grab";
+            e.preventDefault();
+          }
+        }
+
+        // 防止鼠标离开容器时还在拖拽
+        function onMouseLeave(e) {
+          if (isDragging) {
+            isDragging = false;
+            wrapper.style.cursor = "grab";
+          }
+        }
+
+        // ----- 窗口resize时重新限制边界，保持视图合理 -----
+        function onResize() {
+          clampTranslation();
+          updateTransform();
+        }
+
+        // ----- 初始化事件绑定 -----
+        function init() {
+          // 滚轮
+          wrapper.addEventListener("wheel", onWheel, { passive: false });
+
+          // 拖拽
+          wrapper.addEventListener("mousedown", onMouseDown);
+          window.addEventListener("mousemove", onMouseMove);
+          window.addEventListener("mouseup", onMouseUp);
+          wrapper.addEventListener("mouseleave", onMouseLeave);
+
+          // 重置按钮
+          resetBtn.addEventListener("click", resetView);
+
+          // resize
+          window.addEventListener("resize", onResize);
+
+          // 图片加载完成后，确保边界正确
+          img.addEventListener("load", () => {
+            clampTranslation();
+            updateTransform();
+          });
+
+          // 如果图片已经加载完成，直接限制
+          if (img.complete) {
+            clampTranslation();
+            updateTransform();
+          }
+
+          // 初始更新
+          updateTransform();
+
+          // 清理 (虽然不是必须，但好的习惯，但这里不涉及组件卸载，所以忽略)
+        }
+
+        // 启动
+        init();
+      })();
+    </script>
+  </body>
+</html>

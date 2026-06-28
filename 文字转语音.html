@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文字转语音</title>
+  </head>
+  <body>
+    <div class="container">
+      <h3>文字语音播报</h3>
+      <textarea
+        id="textarea"
+        placeholder="请输入要播报的文字..."
+        rows="4"
+      ></textarea>
+      <div>
+        <button id="btnStart">开始播报</button>
+        <button id="btnClose">停止播报</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    const start = document.getElementById("btnStart");
+    const close = document.getElementById("btnClose");
+    const textarea = document.getElementById("textarea");
+
+    // 语音播报函数
+    const speak = (text) => {
+      if (!text.trim()) {
+        return;
+      }
+
+      // 创建 SpeechSynthesisUtterance 实例
+      const utterance = new SpeechSynthesisUtterance(text);
+      // 配置语音参数
+      utterance.lang = "zh-CN"; // 中文
+      utterance.rate = 0.8; // 语速：0.1 - 10
+      utterance.pitch = 2; // 音调：0 - 2
+      utterance.volume = 1; // 音量：0 - 1
+
+      // 事件监听
+      utterance.onstart = () => {
+        console.log("onstart");
+      };
+      utterance.onend = () => {
+        console.log("onend");
+      };
+      utterance.onerror = () => {
+        console.log("onerror");
+      };
+
+      // 开始播报
+      window.speechSynthesis.speak(utterance);
+    };
+    const stop = () => {
+      window.speechSynthesis.cancel();
+    };
+
+    start.onclick = (e) => {
+      speak(textarea.value);
+    };
+  </script>
+</html>

@@ -32,7 +32,7 @@ if (navigator.mediaDevices.getUserMedia) {
     },
     (err) => {
       alert("授权失败：", err);
-    }
+    },
   );
 } else {
   alert("您的浏览器不支持录音功能");
