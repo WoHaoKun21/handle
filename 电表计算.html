@@ -324,9 +324,12 @@
 
     // 判断0/0的两种下情况
     const safeDivision = (a, b) => {
+      const result = a / b; // 判断是否为0
+      // 判断Infinity
+      if (result === Infinity) return Infinity;
+      if (isNaN(result)) return NaN;
       if (b === 0) return 0;
-      const result = a / b;
-      return isNaN(result) ? 0 : result;
+      return isNaN(result) ? 0 : result; // 判断是否为NaN
     };
 
     // 用量计算
