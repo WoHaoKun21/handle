@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        box-sizing: border-box;
+        font-size: 12px;
+      }
+      html {
+        font-size: 16px;
+      }
+
+      .container {
+        position: relative;
+        padding: 10px 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background: #fafafa;
+        user-select: none;
+      }
+
+      /* 表格样式 */
+      .container > .table {
+        margin: 0px;
+        margin-bottom: 20px;
+        width: 100%;
+        border-spacing: 0px;
+        border-top: 1px solid #ccc;
+      }
+
+      .table tr > td {
+        height: 30px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+      }
+
+      .table tr > td:first-of-type {
+        padding-right: 8px;
+        width: 115px;
+        /* text-align: right; */
+        border-left: 1px solid #ccc;
+      }
+
+      .table tr > td:last-child {
+        width: 50px;
+      }
+
+      .table tr > td > input {
+        width: 110px;
+        outline: none;
+        border: none;
+        text-align: center;
+      }
+
+      /* 单价表格样式 */
+      .container > .table2 {
+        margin: 0px;
+        margin-bottom: 20px;
+        width: 100%;
+        border-spacing: 0px;
+        border-top: 1px solid #ccc;
+      }
+
+      .table2 tr > td {
+        height: 30px;
+        width: 50px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+      }
+
+      .table2 tr > td:first-of-type {
+        border-left: 1px solid #ccc;
+      }
+
+      .table2 tr > td > input {
+        width: 50px;
+        outline: none;
+        border: none;
+        text-align: center;
+      }
+      .warn {
+        padding: 20px 0px;
+        padding-top: 0px;
+        width: 100%;
+        font-size: 12px;
+        text-align: center;
+      }
+      .tips {
+        background: #ff5757;
+      }
+
+      /* 单价历史记录表格样式 */
+      .container > .logList {
+        display: none;
+        margin: 0px;
+        margin-bottom: 20px;
+        width: 100%;
+        overflow: auto;
+      }
+
+      .logList > table {
+        width: 1500px;
+        border-spacing: 0px;
+        border-top: 1px solid #ccc;
+      }
+
+      .logList tr > td {
+        height: 30px;
+        width: 100px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+      }
+
+      .logList tr > td:first-of-type {
+        border-left: 1px solid #ccc;
+      }
+
+      .table.hidden,
+      .warn.hidden,
+      .table2.hidden,
+      .logList.hidden {
+        position: absolute;
+        top: -1000px;
+        border: 1px solid #f00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <table class="table">
+        <tr>
+          <td>
+            <label for="preDateInput">日期</label>
+          </td>
+          <td>
+            <input type="date" value="2026-05-05" id="preDate" />
+          </td>
+          <td>
+            <input type="date" value="2026-05-31" id="toDay" />
+          </td>
+          <td>用量</td>
+        </tr>
+        <tr>
+          <td>
+            <label for="preAll">井表电量</label>
+          </td>
+          <td>
+            <input type="number" value="0" id="preAll" />
+          </td>
+          <td>
+            <input type="number" value="0" id="nextAll" />
+          </td>
+          <td id="allResult">0</td>
+        </tr>
+        <tr>
+          <td>
+            <label for="preTwoAll">二层总表①</label>
+          </td>
+          <td>
+            <input type="number" value="0" id="preTwoAll" />
+          </td>
+          <td>
+            <input type="number" value="0" id="nextTwoAll" />
+          </td>
+          <td id="twoAllResult">0</td>
+        </tr>
+        <tr>
+          <td>
+            <label for="preKT">空调外机②</label>
+          </td>
+          <td>
+            <input type="number" value="0" id="preKT" />
+          </td>
+          <td>
+            <input type="number" value="0" id="nextKT" />
+          </td>
+          <td id="kTResult">0</td>
+        </tr>
+        <tr>
+          <td>
+            <label for="preOneKT">一层空调内机③</label>
+          </td>
+          <td>
+            <input type="number" value="0" id="preOneKT" />
+          </td>
+          <td>
+            <input type="number" value="0" id="nextOneKT" />
+          </td>
+          <td id="oneKTResult">0</td>
+        </tr>
+        <tr>
+          <td>
+            <label for="preTwoKT">二层空调内机④</label>
+          </td>
+          <td>
+            <input type="number" value="0" id="preTwoKT" />
+          </td>
+          <td>
+            <input type="number" value="0" id="nextTwoKT" />
+          </td>
+          <td id="twoKTResult">0</td>
+        </tr>
+        <tr>
+          <td>⑤ = ③ + ④</td>
+          <td colspan="2"></td>
+          <td id="fiveResult">0</td>
+        </tr>
+      </table>
+      <table class="table">
+        <tr>
+          <td>楼层</td>
+          <td>计量方式</td>
+          <td>用电量</td>
+          <td>电费</td>
+        </tr>
+        <tr>
+          <td>一层用电量</td>
+          <td>总 - ① - ② + ② ÷ ⑤ × ③</td>
+          <td id="oneUseCable">0</td>
+          <td id="oneFree">0</td>
+        </tr>
+        <tr>
+          <td>二层用电量</td>
+          <td>① + ② ÷ ⑤ × ④</td>
+          <td id="twoUseCable">0</td>
+          <td id="twoFree">0</td>
+        </tr>
+      </table>
+      <div class="warn">
+        便于计算，建议充值时每户150元起，同等预充值。<br />
+        采取计算楼上用电量，分离上下电量。<br />
+        楼上（上次）充值费用—楼上用量*电费单价＝楼上剩余额度。<br />
+        为正数则楼下需补相应金额，为负则楼上补相应金额给楼下。（每次结算记得拍照发群里留档）
+      </div>
+      <table class="table2">
+        <tr>
+          <td>上次充值单价</td>
+          <td>楼上（上次）充值</td>
+          <td>楼上剩余余额</td>
+        </tr>
+        <tr>
+          <td><input type="number" value="0.842" id="prePrice" /></td>
+          <td><input type="number" value="200" id="preRecharge" /></td>
+          <td id="remaining">220</td>
+        </tr>
+        <tr>
+          <td colspan="3" class="tips">结果仅提供参考，请以实际为准！</td>
+        </tr>
+        <tr>
+          <td
+            colspan="3"
+            style="cursor: pointer; background: #4096ffc6"
+            id="submit"
+          >
+            保存记录
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="cursor: pointer" id="logList">
+            本地历史记录（点击展示）
+          </td>
+        </tr>
+      </table>
+      <div class="logList" id="tableList">
+        <table></table>
+      </div>
+    </div>
+  </body>
+  <script>
+    // 上次记录DOM对象
+    const preAll = document.getElementById("preAll"); // 上次总表
+    const preTwoAll = document.getElementById("preTwoAll"); // 上次二层总表
+    const preKT = document.getElementById("preKT"); // 上次空调外机
+    const preOneKT = document.getElementById("preOneKT"); // 上次一层空调内机
+    const preTwoKT = document.getElementById("preTwoKT"); // 上次二层空调内机
+
+    // 本次记录DOM对象
+    const nextAll = document.getElementById("nextAll"); // 本次总表
+    const nextTwoAll = document.getElementById("nextTwoAll"); // 本次二层总表
+    const nextKT = document.getElementById("nextKT"); // 本次空调外机
+    const nextOneKT = document.getElementById("nextOneKT"); // 本次一层空调内机
+    const nextTwoKT = document.getElementById("nextTwoKT"); // 本次二层空调内机
+
+    // 用量DOM对象
+    const allResult = document.getElementById("allResult");
+    const twoAllResult = document.getElementById("twoAllResult");
+    const kTResult = document.getElementById("kTResult");
+    const oneKTResult = document.getElementById("oneKTResult");
+    const twoKTResult = document.getElementById("twoKTResult");
+    const fiveResult = document.getElementById("fiveResult");
+
+    // 单价数据DOM对象
+    const oneUseCable = document.getElementById("oneUseCable"); // 一层用电量
+    const oneFree = document.getElementById("oneFree"); // 一层电费
+    const twoUseCable = document.getElementById("twoUseCable"); // 二层用电量
+    const twoFree = document.getElementById("twoFree"); // 二层电费
+
+    // 充值单价DOM对象
+    const prePrice = document.getElementById("prePrice"); // 上次电价
+    const preRecharge = document.getElementById("preRecharge"); // 上次充值金额
+    const remaining = document.getElementById("remaining"); // 剩余余额
+
+    // 日期DOM对象
+    const preDate = document.getElementById("preDate"); // 保存记录
+    const toDay = document.getElementById("toDay"); // 历史记录
+
+    // 按钮功能DOM对象
+    const submit = document.getElementById("submit"); // 保存记录
+    const logList = document.getElementById("logList"); // 历史记录
+    const tableList = document.getElementById("tableList"); // 历史记录
+
+    // 判断0/0的两种下情况
+    const safeDivision = (a, b) => {
+      const result = a / b; // 判断是否为0
+      // 判断Infinity
+      if (result === Infinity) return Infinity;
+      if (isNaN(result)) return NaN;
+      if (b === 0) return 0;
+      return isNaN(result) ? 0 : result; // 判断是否为NaN
+    };
+
+    // 用量计算
+    const allCount = (preDOM, nextDOM, resultDOM) => {
+      const pre = Number(preDOM.value);
+      const next = Number(nextDOM.value);
+      resultDOM.innerHTML = Number.isInteger(next - pre)
+        ? next - pre
+        : (next - pre).toFixed(2);
+      const three = Number(oneKTResult.innerHTML);
+      const four = Number(twoKTResult.innerHTML);
+
+      // 计算 ④ + ⑤ 的结果
+      if ((three && four) || three === 0 || four === 0) {
+        fiveResult.innerHTML = Number.isInteger(three + four)
+          ? three + four
+          : (three + four).toFixed(2);
+      }
+
+      oneAndTwoSum();
+    };
+
+    // 一二层电量计算
+    const oneAndTwoSum = () => {
+      const all = Number(allResult.innerHTML);
+      const one = Number(twoAllResult.innerHTML);
+      const two = Number(kTResult.innerHTML);
+      const three = Number(oneKTResult.innerHTML);
+      const four = Number(twoKTResult.innerHTML);
+      const five = Number(fiveResult.innerHTML);
+
+      const price = Number(prePrice.value); // 单价
+
+      const oneAll = all - one - two + safeDivision(two, five) * three;
+      const twoAll = one + safeDivision(two, five) * four;
+
+      oneUseCable.innerHTML = Number.isInteger(oneAll)
+        ? oneAll
+        : oneAll.toFixed(2);
+      twoUseCable.innerHTML = Number.isInteger(twoAll)
+        ? twoAll
+        : twoAll.toFixed(2);
+      oneFree.innerHTML = Number.isInteger(oneAll * price)
+        ? oneAll * price
+        : (oneAll * price).toFixed(2);
+      twoFree.innerHTML = Number.isInteger(twoAll * price)
+        ? twoAll * price
+        : (twoAll * price).toFixed(2);
+    };
+
+    // 计算楼上剩余余额
+    const remainingPrice = () => {
+      const pre = Number(preRecharge.value); // 上次充值单价
+      const up = Number(twoUseCable.innerHTML); // 楼上充值
+      const price = Number(prePrice.value); // 楼上剩余金额
+      const remainingData = pre - up * price;
+      remaining.innerHTML = Number.isInteger(remainingData)
+        ? remainingData
+        : remainingData.toFixed(2);
+    };
+
+    // 保存本次数据
+    const saveData = () => {
+      const lastData = localStorage.getItem("lastData");
+    };
+
+    // 页面初始化，获取上次数据
+    const getLastData = () => {
+      const lastData =
+        JSON.parse(window.localStorage.getItem("lastData")) || [];
+
+      preAll.value = lastData.preAll || 0;
+      preTwoAll.value = lastData.preTwoAll || 0;
+      preKT.value = lastData.preKT || 0;
+      preOneKT.value = lastData.preOneKT || 0;
+      preTwoKT.value = lastData.preTwoKT || 0;
+
+      prePrice.value = lastData.prePrice || 0.842;
+      preRecharge.value = lastData.preRecharge || 0;
+      remaining.innerHTML = lastData.remaining || 0;
+
+      const date = new Date();
+      const thisDay = `${date.getFullYear()}-${date.getMonth() + 1 >= 10 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)}-${date.getDate() >= 10 ? date.getDate() : "0" + date.getDate()}`;
+      preDate.value = lastData.preDate; // 获取当前时间
+      toDay.value = thisDay;
+    };
+
+    getLastData();
+
+    preAll.onblur = () => allCount(preAll, nextAll, allResult);
+    preTwoAll.onblur = () => allCount(preTwoAll, nextTwoAll, twoAllResult);
+    preKT.onblur = () => allCount(preKT, nextKT, kTResult);
+    preOneKT.onblur = () => allCount(preOneKT, nextOneKT, oneKTResult);
+    preTwoKT.onblur = () => allCount(preTwoKT, nextTwoKT, twoKTResult);
+
+    nextAll.onblur = () => allCount(preAll, nextAll, allResult);
+    nextTwoAll.onblur = () => allCount(preTwoAll, nextTwoAll, twoAllResult);
+    nextKT.onblur = () => allCount(preKT, nextKT, kTResult);
+    nextOneKT.onblur = () => allCount(preOneKT, nextOneKT, oneKTResult);
+    nextTwoKT.onblur = () => allCount(preTwoKT, nextTwoKT, twoKTResult);
+
+    prePrice.onblur = () => oneAndTwoSum(); // 改变单价重新生成电费
+    preRecharge.onblur = () => remainingPrice(); // 楼上上次充值金额触发
+
+    // 按钮功能
+    submit.onclick = () => {
+      const logList = JSON.parse(window.localStorage.getItem("logList")) || [];
+      const log = {
+        id: logList.length + 1,
+        preAll: Number(preAll.value),
+        preTwoAll: Number(preTwoAll.value),
+        preKT: Number(preKT.value),
+        preOneKT: Number(preOneKT.value),
+        preTwoKT: Number(preTwoKT.value),
+        nextAll: Number(nextAll.value),
+        nextTwoAll: Number(nextTwoAll.value),
+        nextKT: Number(nextKT.value),
+        nextOneKT: Number(nextOneKT.value),
+        nextTwoKT: Number(nextTwoKT.value),
+        allResult: Number(allResult.innerHTML),
+        twoAllResult: Number(twoAllResult.innerHTML),
+        kTResult: Number(kTResult.innerHTML),
+        oneKTResult: Number(oneKTResult.innerHTML),
+        twoKTResult: Number(twoKTResult.innerHTML),
+        fiveResult: Number(fiveResult.innerHTML),
+        oneUseCable: Number(oneUseCable.innerHTML),
+        oneFree: Number(oneFree.innerHTML),
+        twoUseCable: Number(twoUseCable.innerHTML),
+        twoFree: Number(twoFree.innerHTML),
+        prePrice: Number(prePrice.value),
+        preRecharge: Number(preRecharge.value),
+        remaining: Number(remaining.innerHTML),
+        preDate: preDate.value, // 上次计算时间
+        toDay: toDay.value, // 此次计算时间
+      };
+      logList.push(log);
+      window.localStorage.setItem("logList", JSON.stringify(logList));
+      const lastData = {
+        preAll: Number(nextAll.value),
+        preTwoAll: Number(nextTwoAll.value),
+        preKT: Number(nextKT.value),
+        preOneKT: Number(nextOneKT.value),
+        preTwoKT: Number(nextTwoKT.value),
+
+        prePrice: Number(prePrice.value),
+        preRecharge: Number(preRecharge.value),
+        remaining: Number(remaining.innerHTML),
+
+        preDate: toDay.value, // 获取当前时间
+      };
+      window.localStorage.setItem("lastData", JSON.stringify(lastData));
+      alert("保存成功");
+    };
+
+    logList.onclick = () => {
+      tableList.style.display = "block";
+      document.getElementsByClassName("table")[0].classList.add("hidden");
+      document.getElementsByClassName("table")[1].classList.add("hidden");
+      document.getElementsByClassName("warn")[0].classList.add("hidden");
+      document.getElementsByClassName("table2")[0].classList.add("hidden");
+      const list = JSON.parse(window.localStorage.getItem("logList")) || [];
+      let htmlList = `
+            <tr>
+              <td>开始日期</td>
+              <td>结束日期</td>
+              <td>井表电量</td>
+              <td>二层总表①</td>
+              <td>空调外机②</td>
+              <td>一层空调内机③</td>
+              <td>二层空调内机④</td>
+              <td>⑤ = ③ + ④</td>
+              <td>一层用电量</td>
+              <td>一层电费</td>
+              <td>二层用电量</td>
+              <td>二层电费</td>
+              <td>充值单价</td>
+              <td>楼上充值金额</td>
+              <td>楼上剩余金额</td>
+            </tr>`;
+      list.map((o) => {
+        htmlList += `
+            <tr>
+              <td>${o.preDate}</td>
+              <td>${o.toDay}</td>
+              <td>${o.preAll}</td>
+              <td>${o.preTwoAll}</td>
+              <td>${o.preKT}</td>
+              <td>${o.preOneKT}</td>
+              <td>${o.preTwoKT}</td>
+              <td>${o.fiveResult}</td>
+              <td>${o.oneUseCable}</td>
+              <td>${o.oneFree}</td>
+              <td>${o.twoUseCable}</td>
+              <td>${o.twoFree}</td>
+              <td>${o.prePrice}</td>
+              <td>${o.preRecharge}</td>
+              <td>${o.remaining}</td>
+            </tr>`;
+      });
+      htmlList += `
+            <tr colspan="15">
+              <td id="back" style="background: #4096ffc6" >返回</td>
+            </tr>`;
+      tableList.children[0].innerHTML = htmlList;
+
+      document.getElementById("back").onclick = () => {
+        tableList.style.display = "none";
+        document.getElementsByClassName("table")[0].classList.remove("hidden");
+        document.getElementsByClassName("table")[1].classList.remove("hidden");
+        document.getElementsByClassName("warn")[0].classList.remove("hidden");
+        document.getElementsByClassName("table2")[0].classList.remove("hidden");
+      };
+    };
+  </script>
+</html>
