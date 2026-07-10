@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet 动态天气云图播放器（支持方格/平铺切换）</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #0f141d;
+      }
+
+      /* 底部时间轴控制面板 */
+      .control-panel {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        background: rgba(15, 23, 42, 0.9);
+        padding: 15px 25px;
+        border-radius: 8px;
+        border: 1px solid #1e293b;
+        color: #fff;
+        width: 80%;
+        max-width: 900px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        font-family: sans-serif;
+      }
+
+      .btn {
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+      .play-btn {
+        background: #1d4ed8;
+        min-width: 75px;
+      }
+      .play-btn:hover {
+        background: #2563eb;
+      }
+
+      /* 切换模式按钮样式 */
+      .mode-btn {
+        background: #475569;
+        min-width: 110px;
+      }
+      .mode-btn:hover {
+        background: #64748b;
+      }
+      .mode-btn.active-grid {
+        background: #059669; /* 变成绿色代表方格模式激活 */
+      }
+
+      .timeline-slider {
+        flex: 1;
+        cursor: pointer;
+        accent-color: #1d4ed8;
+      }
+
+      .time-display {
+        font-family: monospace;
+        font-size: 14px;
+        min-width: 140px;
+        text-align: right;
+      }
+
+      /* 右下角图例样式 */
+      .legend {
+        background: rgba(15, 23, 42, 0.85);
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #1e293b;
+        font-family: sans-serif;
+        font-size: 12px;
+        line-height: 20px;
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .legend strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #38bdf8;
+      }
+      .legend i {
+        width: 18px;
+        height: 14px;
+        float: left;
+        margin-right: 8px;
+        margin-top: 3px;
+        opacity: 0.85;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <div class="control-panel">
+      <button id="playBtn" class="btn play-btn">▶ 播放</button>
+      <button id="modeBtn" class="btn mode-btn">🔮 平铺云图</button>
+      <input
+        id="timeline"
+        class="timeline-slider"
+        type="range"
+        min="0"
+        max="0"
+        value="0"
+      />
+      <div id="timeText" class="time-display">⏱ 载入数据中...</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+      const tdtKeyList = [
+        "71270bd99accdda913f3341432d41fd8",
+        "d2fee6c7f5073a18f3197b7b12132fa5",
+        "b4f1f86c40f714a624d1bf04480b2c2b",
+        "e0f2f9897bc755f61438b03804066a32",
+        "371bb242651ffa45e3775e07c04454ad",
+      ];
+
+      const key = tdtKeyList[Math.floor(Math.random() * tdtKeyList.length)];
+      // 天地图矢量图
+      const overlaysVec = {
+        天地图矢量: L.tileLayer(
+          `http://t{s}.tianditu.com/vec_c/wmts?layer=vec&style=default&tilematrixset=c&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${key}`,
+          {
+            maxZoom: 17,
+            tileSize: 256,
+            zoomOffset: 1,
+            minZoom: 3,
+            subdomains: ["0", "1", "2", "3"],
+          },
+        ),
+      };
+
+      map = L.map("map", {
+        crs: L.CRS.EPSG4326, // 天地图的坐标系
+        zoom: 11,
+        center: [30.244159698486328, 120.15111923217773],
+        layers: Object.values(overlaysVec),
+        attributionControl: false, // 禁止显示版权信息
+        zoomControl: true, // 放大缩小
+        doubleClickZoom: true, // 双击放大
+        inertia: true, // 平移惯性
+      });
+
+      // 2. 经典天气雷达色阶配置
+      const colorScale = [
+        { val: 0.1, color: [0, 0, 255, 0] },
+        { val: 0.5, color: [0, 160, 245, 120] },
+        { val: 1.5, color: [0, 240, 0, 180] },
+        { val: 3.0, color: [250, 250, 0, 210] },
+        { val: 5.0, color: [255, 120, 0, 230] },
+        { val: 7.0, color: [255, 0, 0, 245] },
+        { val: 10.0, color: [180, 0, 180, 255] },
+      ];
+
+      function getColorForValue(val) {
+        if (val < colorScale[0].val) return [0, 0, 0, 0];
+        for (let i = 0; i < colorScale.length - 1; i++) {
+          const curr = colorScale[i];
+          const next = colorScale[i + 1];
+          if (val >= curr.val && val <= next.val) {
+            const t = (val - curr.val) / (next.val - curr.val);
+            return [
+              Math.round(curr.color[0] + (next.color[0] - curr.color[0]) * t),
+              Math.round(curr.color[1] + (next.color[1] - curr.color[1]) * t),
+              Math.round(curr.color[2] + (next.color[2] - curr.color[2]) * t),
+              Math.round(curr.color[3] + (next.color[3] - curr.color[3]) * t),
+            ];
+          }
+        }
+        return colorScale[colorScale.length - 1].color;
+      }
+
+      // 3. 全局控制状态变量
+      let weatherDataGrouped = {};
+      let timeList = [];
+      let currentIndex = 0;
+      let isPlaying = false;
+      let playTimer = null;
+      let weatherOverlay = null;
+      let renderMode = "smooth"; // 新增：'smooth' 代表平铺过渡云图，'grid' 代表颗粒离散方格网格
+
+      const playBtn = document.getElementById("playBtn");
+      const modeBtn = document.getElementById("modeBtn");
+      const timeline = document.getElementById("timeline");
+      const timeText = document.getElementById("timeText");
+
+      // 4. 核心渲染函数
+      function renderFrame(index) {
+        const currentTime = timeList[index];
+        const currentData = weatherDataGrouped[currentTime];
+        if (!currentData) return;
+
+        timeText.innerText = currentTime.substring(0, 16);
+        timeline.value = index;
+
+        const lats = currentData.map((d) => d.lat);
+        const lons = currentData.map((d) => d.lon);
+        const bounds = [
+          [Math.min(...lats), Math.min(...lons)],
+          [Math.max(...lats), Math.max(...lons)],
+        ];
+
+        const uniqueLats = [...new Set(lats)].sort((a, b) => b - a);
+        const uniqueLons = [...new Set(lons)].sort((a, b) => a - b);
+        const width = uniqueLons.length;
+        const height = uniqueLats.length;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const dataMap = {};
+        currentData.forEach((d) => {
+          dataMap[`${d.lat.toFixed(2)}_${d.lon.toFixed(2)}`] = d.val;
+        });
+
+        // 判断渲染分支
+        if (renderMode === "smooth") {
+          // 分支 A：经典平滑云图模式 (1比1网格像素利用浏览器图像拉伸渲染实现线性平滑过渡)
+          canvas.width = width;
+          canvas.height = height;
+          const imgData = ctx.createImageData(width, height);
+
+          for (let y = 0; y < height; y++) {
+            const lat = uniqueLats[y];
+            for (let x = 0; x < width; x++) {
+              const lon = uniqueLons[x];
+              const val = dataMap[`${lat.toFixed(2)}_${lon.toFixed(2)}`] || 0;
+              const color = getColorForValue(val);
+              const pixelIndex = (y * width + x) * 4;
+
+              imgData.data[pixelIndex] = color[0];
+              imgData.data[pixelIndex + 1] = color[1];
+              imgData.data[pixelIndex + 2] = color[2];
+              imgData.data[pixelIndex + 3] = color[3];
+            }
+          }
+          ctx.putImageData(imgData, 0, 0);
+        } else {
+          // 分支 B：方格网格云图模式 (放大 Canvas 画布像素，关闭反锯齿，利用fillRect给格点间加上细小的分界间隙)
+          const scale = 12; // 将1个格点放大为12x12的正方形网格
+          canvas.width = width * scale;
+          canvas.height = height * scale;
+
+          // 关键设置：关闭浏览器渲染时的图像模糊平滑，让方块边界棱角分明
+          ctx.imageSmoothingEnabled = false;
+
+          for (let y = 0; y < height; y++) {
+            const lat = uniqueLats[y];
+            for (let x = 0; x < width; x++) {
+              const lon = uniqueLons[x];
+              const val = dataMap[`${lat.toFixed(2)}_${lon.toFixed(2)}`] || 0;
+
+              if (val >= colorScale[0].val) {
+                const color = getColorForValue(val);
+                ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3] / 255})`;
+
+                // 绘制带 1 像素黑色物理边框线隙的方格，凸显网格阵列感
+                ctx.fillRect(x * scale, y * scale, scale - 1, scale - 1);
+              }
+            }
+          }
+        }
+
+        const imageUrl = canvas.toDataURL();
+
+        // 实时更新图例图层纹理
+        if (weatherOverlay) {
+          weatherOverlay.setUrl(imageUrl);
+          weatherOverlay.setBounds(bounds);
+        } else {
+          weatherOverlay = L.imageOverlay(imageUrl, bounds, {
+            opacity: 0.85,
+            interactive: false,
+          }).addTo(map);
+          map.fitBounds(bounds);
+        }
+      }
+
+      // 5. 载入原始气象 JSON 字典数据
+      fetch("./weatherData.json")
+        .then((res) => res.json())
+        .then((rawData) => {
+          rawData.forEach((item) => {
+            if (!weatherDataGrouped[item.time]) {
+              weatherDataGrouped[item.time] = [];
+            }
+            weatherDataGrouped[item.time].push(item);
+          });
+
+          timeList = Object.keys(weatherDataGrouped).sort();
+          timeline.max = timeList.length - 1;
+
+          renderFrame(0);
+          addLegend();
+        })
+        .catch((err) => {
+          timeText.innerText = "数据载入失败";
+          console.error(err);
+        });
+
+      // 6. 播放器逻辑控制
+      function togglePlay() {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          playBtn.innerText = "⏸ 暂停";
+          playTimer = setInterval(() => {
+            currentIndex = (currentIndex + 1) % timeList.length;
+            renderFrame(currentIndex);
+          }, 1200);
+        } else {
+          playBtn.innerText = "▶ 播放";
+          clearInterval(playTimer);
+        }
+      }
+
+      // 新增：模式切换处理事件
+      function switchMode() {
+        if (renderMode === "smooth") {
+          renderMode = "grid";
+          modeBtn.innerText = "🟩 方格网格";
+          modeBtn.classList.add("active-grid");
+        } else {
+          renderMode = "smooth";
+          modeBtn.innerText = "🔮 平铺云图";
+          modeBtn.classList.remove("active-grid");
+        }
+        // 切换模式后，不管是在播放还是暂停中，立即原地重新重绘当前帧
+        renderFrame(currentIndex);
+      }
+
+      playBtn.addEventListener("click", togglePlay);
+      modeBtn.addEventListener("click", switchMode);
+
+      timeline.addEventListener("input", (e) => {
+        if (isPlaying) togglePlay();
+        currentIndex = parseInt(e.target.value);
+        renderFrame(currentIndex);
+      });
+
+      // 7. 动态渲染图例
+      function addLegend() {
+        const legend = L.control({ position: "bottomright" });
+        legend.onAdd = function () {
+          const div = L.DomUtil.create("div", "legend");
+          div.innerHTML += `<strong>降水量 (mm)</strong>`;
+          for (let i = 0; i < colorScale.length; i++) {
+            const curr = colorScale[i];
+            const next = colorScale[i + 1];
+            const rgbStr = `rgba(${curr.color.slice(0, 3).join(",")}, 0.9)`;
+            div.innerHTML +=
+              `<i style="background: ${rgbStr}"></i> ` +
+              curr.val +
+              (next ? ` &ndash; ${next.val}<br>` : "+");
+          }
+          return div;
+        };
+        legend.addTo(map);
+      }
+    </script>
+  </body>
+</html>
